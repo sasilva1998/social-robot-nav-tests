@@ -63,7 +63,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
 
-    <!-- <node name="lower_arms" pkg="pepper_gazebo_plugin" type="arms_down.sh" output="screen" /> -->
+    <node name="lower_arms" pkg="pepper_gazebo_plugin" type="arms_down.sh" output="screen" />
 
     <node name="laser_publisher" pkg="pepper_gazebo_plugin" type="laser_publisher.py" />
 
@@ -114,7 +114,9 @@
         <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
             <param name="resolution" value="0.05" />
             <param name="frame_id" type="string" value="odom" />
-            <param name="sensor_model/max_range" value="5.0" />
+            <!-- <param name="sensor_model/max_range" value="5.0" /> -->
+            <param name="filter_ground" value="true" />
+            <param name="ground_filter/distance" value="0.03" />
             <remap from="cloud_in" to="/pepper/camera/depth/points" />
         </node>
 
@@ -132,6 +134,10 @@
             <param name="odom_frame" type="string" value="odom" />
         </node>
 
+        <include file="$(find fetch_move_base_planning)/launch/pepper_move_base_planning.launch" />
+        <include file="$(find fetch_move_base_mapping)/launch/pepper_move_base_mapping.launch" />
+        <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" />
+
         <!-- Not using Cartographer because of an odom shifting problem -->
         <!-- cartographer_node -->
         <!-- <node pkg="cartographer_ros" type="cartographer_node" name="cartographer_node" args="-configuration_directory $(find test_pepper_simulation_bringup)/config
@@ -148,7 +154,7 @@
 
             <!-- with octomap -->
             <!-- pre-made map for localization -->
-            <arg name="map_file" default="$(find pepper_pipeline)/map/map_laser_octomap.bt" />
+            <arg name="map_file" default="$(find pepper_pipeline)/map/map_laser_octomap_2.bt" />
             <!-- Map server -->
             <node pkg="octomap_server" name="octomap_server" type="octomap_server_node" args="$(arg map_file)" />
 
@@ -211,18 +217,14 @@
                     <remap from="cmd_vel" to="/pepper/cmd_vel" />
                     <remap from="odom" to="/pepper/odom" />
                     <param name="controller_frequency" value="10" />
-
                     <!-- Use the dwa local planner for the PR2 -->
                     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
-
                     <!--- load common configuration files -->
                     <rosparam file="$(arg pkg_nav_config)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
                     <rosparam file="$(arg pkg_nav_config)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-
                     <!--- load global navigation specific parameters -->
                     <rosparam file="$(arg pkg_nav_config)/config/local_costmap_params.yaml" command="load" ns="local_costmap" />
                     <rosparam file="$(arg pkg_nav_config)/config/global_costmap_params.yaml" command="load" ns="global_costmap" />
-
                     <!--- load planner parameters -->
                     <rosparam file="$(arg pkg_nav_config)/config/base_local_planner_params.yaml" command="load" />
                     <rosparam file="$(arg pkg_nav_config)/config/dwa_local_planner.yaml" command="load" ns="DWAPlannerROS" />
