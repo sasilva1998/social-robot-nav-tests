@@ -28,4 +28,30 @@ For this part the following will be considered:
 
 ![](https://i.imgur.com/8D9VzFD.png)
 
-3.
+3. Change the integration of the cost using the interaction of agents as defined above.
+
+   In brief the cost of the path is modified as the integral of the interaction zone between the agent and the robot with the planned path in a way that the modification should be related to the cost optimization function.
+
+![](https://i.imgur.com/FYW02Ie.png)
+
+![](https://i.imgur.com/HJEfEql.png)
+
+### Stage 2
+
+For this part the following is considered:
+
+1. Agents move around an specific space.
+
+In this case not much changes will be made. Simply in simulation agents will be put to move around waypoints and the robot shall replan its path depending on the movements of the agents.
+
+### Stage 3
+
+For this part the following is considered:
+
+1. There are more complex interactions of people. For example groups and interactions with interesting objects.
+
+#### How to do it?
+
+GOFF will be used as in Ngo, H. Q. T., Le, V. N., Thien, V. D. N., Nguyen, T. P., & Nguyen, H. (2020). Develop the socially human-aware navigation system using dynamic window approach and optimize cost function for autonomous medical robot. Advances in Mechanical Engineering, 12(12), 1–17. https://doi.org/10.1177/1687814020979430
+
+And this will influence just as with static single agents.
