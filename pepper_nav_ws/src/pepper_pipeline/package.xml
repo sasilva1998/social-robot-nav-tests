@@ -52,13 +52,34 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>mbf_msgs</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>mbf_msgs</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>mbf_msgs</exec_depend>
 
+  <depend>roslib</depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
+  <!-- <depend>mbf_msgs</depend> -->
+
+
+  <!-- tf/tf2 -->
+  <depend>tf</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+
+  <!-- msgs -->
+  <depend>sensor_msgs</depend>
+
+  <!-- Fetch -->
+  <depend>fetch_move_base_msgs</depend>
+  <depend>fetch_move_base_control</depend>
+  <depend>fetch_move_base_mapping</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

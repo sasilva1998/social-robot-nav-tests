@@ -2,16 +2,37 @@ cmake_minimum_required(VERSION 3.0.2)
 project(pepper_pipeline)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslib
   rospy
+  sensor_msgs
   std_msgs
+  tf
+  tf2
+  tf2_ros
+  tf2_eigen
+  actionlib
+  actionlib_msgs
+  fetch_move_base_msgs
+  mbf_msgs
 )
+
+find_package(ompl REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBFCL REQUIRED fcl)
+
+find_library(LIBFCL_LIBRARIES_FULL ${LIBFCL_LIBRARIES} ${LIBFCL_LIBRARY_DIRS})
+set(LIBFCL_LIBRARIES "${LIBFCL_LIBRARIES_FULL}")
+
+
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -102,12 +123,22 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+# catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pepper_pipeline
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
+# )
+
+
+catkin_package(
+  INCLUDE_DIRS include
+#  LIBRARIES
+  CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib fetch_move_base_msgs
+  mbf_msgs
+  # DEPENDS OMPL
 )
+
 
 ###########
 ## Build ##
@@ -204,3 +235,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(mbf_client src/mbf_client.cpp)
+target_link_libraries(mbf_client ${catkin_LIBRARIES})
+add_dependencies(mbf_client ${catkin_EXPORTED_TARGETS} fetch_move_base_msgs_generate_messages_cpp ${fetch_move_base_msgs_EXPORTED_TARGETS})
+
