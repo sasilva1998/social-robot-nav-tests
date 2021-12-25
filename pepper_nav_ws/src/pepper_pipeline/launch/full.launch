@@ -97,7 +97,7 @@
         </include>
 
         <!-- Moving Pepper to its home state -->
-        <node pkg="test_pepper_common_bringup" type="pepper_moveit_home" name="pepper_moveit_home" output="screen" />
+        <!-- <node pkg="test_pepper_common_bringup" type="pepper_moveit_home" name="pepper_moveit_home" output="screen" /> -->
 
         <group unless="$(arg mapping)">
             <group unless="$(arg localization)">
@@ -110,6 +110,8 @@
 
     <!-- Mapping! -->
     <group if="$(arg mapping)">
+
+        <node pkg="pepper_pipeline" type="mbf_client" name="mbf_path_execute" output="screen" />
 
         <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
             <param name="resolution" value="0.05" />
@@ -148,12 +150,13 @@
         <!-- <node pkg="cartographer_ros" type="cartographer_occupancy_grid_node" name="cartographer_occupancy_grid_node" args="-resolution 0.05" /> -->
 
         <node name="move_base_flex" pkg="mbf_costmap_nav" type="mbf_costmap_nav" required="true" output="screen" clear_params="true">
-            <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
-            <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
-            <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
-            <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+            <rosparam file="$(find pepper_pipeline)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+            <rosparam file="$(find pepper_pipeline)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find pepper_pipeline)/param/local_costmap_params.yaml" command="load" />
+            <rosparam file="$(find pepper_pipeline)/param/global_costmap_params.yaml" command="load" />
             <rosparam file="$(find pepper_pipeline)/param/move_base_flex.yaml" command="load" />
             <remap from="cmd_vel" to="/pepper/cmd_vel" />
+            <remap from="odom" to="/pepper/odom" />
         </node>
 
     </group>
