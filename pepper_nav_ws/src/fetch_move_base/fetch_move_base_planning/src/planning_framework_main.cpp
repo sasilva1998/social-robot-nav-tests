@@ -301,12 +301,14 @@ void OnlinePlannFramework::goToActionCallback(const fetch_move_base_msgs::Goto2D
     //=======================================================================
     std_srvs::Empty::Request req;
     std_srvs::Empty::Response resp;
-    while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  // TODO
-    {
-        ROS_WARN("Request to %s failed; trying again...",
-                 nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
-        usleep(1000000);
-    }
+
+    // ! COMMENTED TO AVOID UNNEEDED PROCESSING
+    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // {
+    //     ROS_WARN("Request to %s failed; trying again...",
+    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //     usleep(1000000);
+    // }
     solution_path_states_.clear();
     goal_available_ = true;
 
@@ -377,12 +379,14 @@ void OnlinePlannFramework::goToRegionActionCallback(
     //=======================================================================
     std_srvs::Empty::Request req;
     std_srvs::Empty::Response resp;
-    while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  // TODO
-    {
-        ROS_WARN("Request to %s failed; trying again...",
-                 nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
-        usleep(1000000);
-    }
+    // ! COMMENTED TO AVOID UNNEEDED PROCESSING
+    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // TODO
+    // {
+    //     ROS_WARN("Request to %s failed; trying again...",
+    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //     usleep(1000000);
+    // }
     solution_path_states_.clear();
     goal_region_available_ = true;
 
@@ -462,12 +466,14 @@ void OnlinePlannFramework::queryGoalCallback(const geometry_msgs::PoseStampedCon
     //=======================================================================
     std_srvs::Empty::Request req;
     std_srvs::Empty::Response resp;
-    while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  // TODO
-    {
-        ROS_WARN("Request to %s failed; trying again...",
-                 nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
-        usleep(1000000);
-    }
+    // ! COMMENTED TO AVOID UNNEEDED PROCESSING
+    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // TODO
+    // {
+    //     ROS_WARN("Request to %s failed; trying again...",
+    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //     usleep(1000000);
+    // }
     solution_path_states_.clear();
     goal_available_ = true;
 
