@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Grid1
         - /Grid1/Offset1
         - /Tracking-Visuals1/TrackedPersons1
         - /Tracking-Visuals1/TrackedPersons1/History as line1
@@ -41,7 +42,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.15000000596046448
-      Cell Size: 1
+      Cell Size: 0.10000000149011612
       Class: rviz/Grid
       Color: 52; 52; 52
       Enabled: true
@@ -55,7 +56,7 @@ Visualization Manager:
         Y: 15
         Z: 0
       Plane: XY
-      Plane Cell Count: 40
+      Plane Cell Count: 10000
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: rviz/Axes
@@ -791,25 +792,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 11.004881858825684
+      Distance: 10.103994369506836
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -8.869393348693848
-        Y: -2.2937304973602295
-        Z: -4.7783305490156636e-6
+        X: 3.127044916152954
+        Y: -8.486804962158203
+        Z: -5.7320048654219136e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5347975492477417
+      Pitch: 1.2197972536087036
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 5.138582706451416
+      Yaw: 4.733582019805908
     Saved: ~
 Window Geometry:
   Displays:
