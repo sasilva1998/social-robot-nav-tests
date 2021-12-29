@@ -63,6 +63,7 @@
 #include <fcl/distance.h>
 
 #include <iostream>
+#include <pedsim_msgs/AgentStates.h>
 
 // ROS-Octomap interface
 using octomap_msgs::GetOctomap;
@@ -129,6 +130,7 @@ private:
     std::vector<double> planning_bounds_x_, planning_bounds_y_;
     double fetch_base_radius_, fetch_base_height_;
     std::string octomap_service_;
+    std::string sim_agents_topic;
 
     double octree_res_;
 
@@ -138,6 +140,9 @@ private:
     std::shared_ptr<fcl::Cylinder> fetch_collision_solid_;
 
     bool opport_collision_check_;
+
+    // pedsim variables
+    pedsim_msgs::AgentStatesConstPtr agentStates;
 };
 
 #endif

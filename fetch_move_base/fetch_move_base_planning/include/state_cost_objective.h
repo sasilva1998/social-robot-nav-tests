@@ -196,7 +196,7 @@ public:
     {
         std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
             std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
-        return ob::Cost(state_vality_checker->checkRiskZones(s));
+        return ob::Cost(state_vality_checker->checkSocialComfort(s));
     }
 
     ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const

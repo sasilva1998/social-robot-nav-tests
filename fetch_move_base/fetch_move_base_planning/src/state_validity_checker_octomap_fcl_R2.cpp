@@ -29,6 +29,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     local_nh_.param("fetch_base_radius", fetch_base_radius_, fetch_base_radius_);
     local_nh_.param("fetch_base_height", fetch_base_height_, fetch_base_height_);
     local_nh_.param("octomap_service", octomap_service_, octomap_service_);
+    local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
 
     octree_ = NULL;
 
@@ -63,6 +64,10 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
         else
             ROS_ERROR("Error reading OcTree from stream");
     }
+
+    ROS_INFO_STREAM("Retrieving data from social agents.");
+    agentStates = ros::topic::waitForMessage<pedsim_msgs::AgentStates>(sim_agents_topic);
+    ROS_INFO_STREAM("Data from social agents: " << agentStates->agent_states[0].pose.position.x);
 }
 
 bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
