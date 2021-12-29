@@ -5424,6 +5424,10 @@
     <!-- AGENTS -->
     <!-- SINGLE AGENTS -->
     <!-- single agents for static tests of social rrt star model -->
+    <!-- <waypoint id="point1" x="3" y="-3" r="0.5" />
+    <waypoint id="point2" x="1" y="-1.95" r="0.5" />
+    <waypoint id="point3" x="3.778" y="3" r="0.5" />
+    <waypoint id="point4" x="-5.3" y="3" r="0.5" /> -->
     <agent x="3" y="-3" n="1" dx="0.5" dy="0.5" type="1" />
     <agent x="1.02" y="-1.95" n="1" dx="0.5" dy="0.5" type="1" />
     <agent x="3.778" y="-6.74" n="1" dx="0.5" dy="0.5" type="1" />
