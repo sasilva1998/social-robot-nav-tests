@@ -109,6 +109,12 @@ public:
 
     virtual double checkRiskZones(const ob::State *state) const;
 
+    /*
+     * Returns the cost value for the integration of the path defined on the equation that defines social
+     * comfort zone.
+     */
+    virtual double checkSocialComfort(const ob::State *state) const;
+
     virtual bool isValidPoint(const ob::State *state) const;
 
 private:

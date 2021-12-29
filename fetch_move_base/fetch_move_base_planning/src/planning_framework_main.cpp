@@ -595,6 +595,9 @@ void OnlinePlannFramework::planWithSimpleSetup()
     else if (optimization_objective_.compare("RiskZones") == 0)  // Risk Zones
         simple_setup_->getProblemDefinition()->setOptimizationObjective(
             getRiskZonesObjective(si, motion_cost_interpolation_));
+    else if (optimization_objective_.compare("SocialComfort") == 0)  // Social Comfort
+        simple_setup_->getProblemDefinition()->setOptimizationObjective(
+            getSocialComfortObjective(si, motion_cost_interpolation_));
     else
         simple_setup_->getProblemDefinition()->setOptimizationObjective(getPathLengthObjective(si));
 
@@ -775,6 +778,9 @@ void OnlinePlannFramework::planningTimerCallback()
         else if (optimization_objective_.compare("RiskZones") == 0)  // Risk Zones
             simple_setup_->getProblemDefinition()->setOptimizationObjective(
                 getRiskZonesObjective(simple_setup_->getSpaceInformation(), motion_cost_interpolation_));
+        else if (optimization_objective_.compare("SocialComfort") == 0)  // Social Comfort
+            simple_setup_->getProblemDefinition()->setOptimizationObjective(
+                getSocialComfortObjective(simple_setup_->getSpaceInformation(), motion_cost_interpolation_));
         else
             simple_setup_->getProblemDefinition()->setOptimizationObjective(
                 getPathLengthObjective(simple_setup_->getSpaceInformation()));

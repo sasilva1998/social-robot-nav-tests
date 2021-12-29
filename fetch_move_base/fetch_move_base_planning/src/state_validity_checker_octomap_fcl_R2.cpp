@@ -208,6 +208,60 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
     return state_risk;
 }
 
+/*
+ * Checks and returns the cost value of the robot according to the equation of social comfort.
+ */
+double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state) const
+{
+    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    double state_risk = 1.0;
+
+    // ompl::tools::Profiler::Begin("RiskZones");
+
+    // extract the component of the state and cast it to what we expect
+
+    if (opport_collision_check_ &&
+        (state_r2->values[0] < octree_min_x_ || state_r2->values[1] < octree_min_y_ ||
+         state_r2->values[0] > octree_max_x_ || state_r2->values[1] > octree_max_y_))
+    {
+        // ompl::tools::Profiler::End("RiskZones");
+        return state_risk;
+    }
+
+    // FCL
+    fcl::Transform3f fetch_tf;
+    fetch_tf.setIdentity();
+    fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], 0.0));
+    fcl::Quaternion3f qt0;
+    qt0.fromEuler(0.0, 0.0, 0.0);
+    fetch_tf.setQuatRotation(qt0);
+
+    std::shared_ptr<fcl::Cylinder> cyl0(new fcl::Cylinder(fetch_base_radius_ + 0.2, fetch_base_height_));
+
+    fcl::CollisionObject cyl0_co(cyl0, fetch_tf);
+    fcl::CollisionRequest collision_request;
+    fcl::CollisionResult collision_result;
+
+    fcl::collide(tree_obj_, &cyl0_co, collision_request, collision_result);
+
+    if (collision_result.isCollision())
+        state_risk = 10.0;  // 15, 30
+    else
+    {
+        std::shared_ptr<fcl::Cylinder> cyl1(new fcl::Cylinder(fetch_base_radius_ + 0.4, fetch_base_height_));
+        fcl::CollisionObject cyl1_co(cyl1, fetch_tf);
+        collision_result.clear();
+
+        fcl::collide(tree_obj_, &cyl1_co, collision_request, collision_result);
+        if (collision_result.isCollision())
+            state_risk = 5.0;  // 10, 20
+    }
+
+    // ompl::tools::Profiler::End("RiskZones");
+
+    return state_risk;
+}
+
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const
 {
     OcTreeNode *result;
