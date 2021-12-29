@@ -67,7 +67,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
 
     ROS_INFO_STREAM("Retrieving data from social agents.");
     agentStates = ros::topic::waitForMessage<pedsim_msgs::AgentStates>(sim_agents_topic);
-    ROS_INFO_STREAM("Data from social agents: " << agentStates->agent_states[0].pose.position.x);
+    // ROS_INFO_STREAM("Data from social agents: " << agentStates->agent_states[0].pose.position.x);
 }
 
 bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
@@ -265,6 +265,11 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state) c
     // ompl::tools::Profiler::End("RiskZones");
 
     return state_risk;
+}
+
+double basicPersonalSpaceFnc(double agentX, double agentY, double agentTetha, double agentVelX,
+                             double agentVelY)
+{
 }
 
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const

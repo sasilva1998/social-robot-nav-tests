@@ -118,6 +118,9 @@ public:
 
     virtual bool isValidPoint(const ob::State *state) const;
 
+    double basicPersonalSpaceFnc(double agentX, double agentY, double agentTetha, double agentVelX,
+                                 double agentVelY);
+
 private:
     // ROS
     ros::NodeHandle nh_, local_nh_;
