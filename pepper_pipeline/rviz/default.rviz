@@ -664,29 +664,6 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 25; 255; 0
-      Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
-      Name: Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic: /move_base/DWAPlannerROS/global_plan
-      Unreliable: false
-      Value: true
     - Alpha: 0.699999988079071
       Class: rviz/Map
       Color Scheme: map
@@ -764,6 +741,15 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /fetch_move_base_planner/solution_path
+      Name: Marker
+      Namespaces:
+        online_planner_result_path: true
+        online_planner_rrt: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 244; 244; 244
@@ -792,25 +778,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 10.103994369506836
+      Distance: 16.94986343383789
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.127044916152954
-        Y: -8.486804962158203
+        X: -1.6401647329330444
+        Y: -9.4907808303833
         Z: -5.7320048654219136e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2197972536087036
+      Pitch: 1.2897971868515015
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.733582019805908
+      Yaw: 4.7085747718811035
     Saved: ~
 Window Geometry:
   Displays:
