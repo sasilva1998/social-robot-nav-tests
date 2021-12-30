@@ -216,7 +216,8 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
 /*
  * Checks and returns the cost value of the robot according to the equation of social comfort.
  */
-double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state) const
+double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
+                                                       const ob::SpaceInformationPtr space) const
 {
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 1.0;
@@ -247,6 +248,14 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state) c
     fcl::CollisionRequest collision_request;
     fcl::CollisionResult collision_result;
 
+    // from here on the mod to compute the cost needed is done
+    // fetch_tf.getTranslation()[0];
+
+    for (int i = 0; i < agentStates->agent_states.size(); i++)
+    {
+        this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+    }
+
     fcl::collide(tree_obj_, &cyl0_co, collision_request, collision_result);
 
     if (collision_result.isCollision())
@@ -267,9 +276,15 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state) c
     return state_risk;
 }
 
-double basicPersonalSpaceFnc(double agentX, double agentY, double agentTetha, double agentVelX,
-                             double agentVelY)
+double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state,
+                                                          const pedsim_msgs::AgentState agentState,
+                                                          const ob::SpaceInformationPtr space) const
 {
+    // fcl::Transform3f fetch_tf;
+    // fetch_tf.setIdentity();
+    // fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], 0.0));
+
+    // double distance = ob::StateSpace::distance(state);
 }
 
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const

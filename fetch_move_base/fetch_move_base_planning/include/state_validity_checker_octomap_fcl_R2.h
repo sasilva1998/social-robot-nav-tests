@@ -64,6 +64,7 @@
 
 #include <iostream>
 #include <pedsim_msgs/AgentStates.h>
+#include <pedsim_msgs/AgentState.h>
 
 // ROS-Octomap interface
 using octomap_msgs::GetOctomap;
@@ -114,12 +115,15 @@ public:
      * Returns the cost value for the integration of the path defined on the equation that defines social
      * comfort zone.
      */
-    virtual double checkSocialComfort(const ob::State *state) const;
+    virtual double checkSocialComfort(const ob::State *state, const ob::SpaceInformationPtr space) const;
 
     virtual bool isValidPoint(const ob::State *state) const;
 
-    double basicPersonalSpaceFnc(double agentX, double agentY, double agentTetha, double agentVelX,
-                                 double agentVelY);
+    /*
+     * Calculates the value of the interaction between robot agent and social agent
+     */
+    double basicPersonalSpaceFnc(const ob::State *state, const pedsim_msgs::AgentState agentState,
+                                 const ob::SpaceInformationPtr space) const;
 
 private:
     // ROS
