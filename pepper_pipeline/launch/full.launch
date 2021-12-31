@@ -18,7 +18,7 @@
     <arg name="headless" default="false" />
     <arg name="paused" default="false" />
     <arg name="use_sim_time" default="true" />
-    <arg name="gui" default="true" />
+    <arg name="gui" default="false" />
 
     <arg name="x_pos" default="0" />
     <arg name="y_pos" default="0" />
