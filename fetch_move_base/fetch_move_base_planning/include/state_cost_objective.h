@@ -233,10 +233,16 @@ public:
 
             si_->freeState(test1);
 
+            ROS_INFO_STREAM("Total cost: " << totalCost);
+
             return totalCost;
         }
         else
+        {
+            ROS_INFO_STREAM("Trapezoid cost: " << this->trapezoid(this->stateCost(s1), this->stateCost(s2),
+                                                                  si_->distance(s1, s2)));
             return this->trapezoid(this->stateCost(s1), this->stateCost(s2), si_->distance(s1, s2));
+        }
     }
 };
 

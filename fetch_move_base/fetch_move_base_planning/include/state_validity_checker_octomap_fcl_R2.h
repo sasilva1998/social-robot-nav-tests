@@ -166,7 +166,7 @@ private:
     /*
      * amplitude of basic social personal space function
      */
-    double Ap = 1;
+    double Ap = 100;
 
     /*
      * standard deviation in X of gaussian basic social personal space function

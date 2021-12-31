@@ -231,8 +231,10 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
         state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
     }
 
-    if (state_risk == 0.0)
+    if (state_risk <= 1)
         state_risk = 1;
+
+    // ROS_INFO_STREAM("The current state risk: " << state_risk);
 
     return state_risk;
 }
