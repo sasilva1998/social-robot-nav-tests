@@ -30,6 +30,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     local_nh_.param("fetch_base_height", fetch_base_height_, fetch_base_height_);
     local_nh_.param("octomap_service", octomap_service_, octomap_service_);
     local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
+    local_nh_.param("odometry_topic", odometry_topic, odometry_topic);
 
     octree_ = NULL;
 
@@ -68,6 +69,9 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     ROS_INFO_STREAM("Retrieving data from social agents.");
     agentStates = ros::topic::waitForMessage<pedsim_msgs::AgentStates>(sim_agents_topic);
     // ROS_INFO_STREAM("Data from social agents: " << agentStates->agent_states[0].pose.position.x);
+
+    ROS_INFO_STREAM("Retrieving robot odometry.");
+    odomData = ros::topic::waitForMessage<nav_msgs::Odometry>(odometry_topic);
 }
 
 bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
@@ -220,58 +224,15 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
                                                        const ob::SpaceInformationPtr space) const
 {
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
-    double state_risk = 1.0;
-
-    // ompl::tools::Profiler::Begin("RiskZones");
-
-    // extract the component of the state and cast it to what we expect
-
-    if (opport_collision_check_ &&
-        (state_r2->values[0] < octree_min_x_ || state_r2->values[1] < octree_min_y_ ||
-         state_r2->values[0] > octree_max_x_ || state_r2->values[1] > octree_max_y_))
-    {
-        // ompl::tools::Profiler::End("RiskZones");
-        return state_risk;
-    }
-
-    // FCL
-    fcl::Transform3f fetch_tf;
-    fetch_tf.setIdentity();
-    fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], 0.0));
-    fcl::Quaternion3f qt0;
-    qt0.fromEuler(0.0, 0.0, 0.0);
-    fetch_tf.setQuatRotation(qt0);
-
-    std::shared_ptr<fcl::Cylinder> cyl0(new fcl::Cylinder(fetch_base_radius_ + 0.2, fetch_base_height_));
-
-    fcl::CollisionObject cyl0_co(cyl0, fetch_tf);
-    fcl::CollisionRequest collision_request;
-    fcl::CollisionResult collision_result;
-
-    // from here on the mod to compute the cost needed is done
-    // fetch_tf.getTranslation()[0];
+    double state_risk = 0.0;
 
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
-        this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+        state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
     }
 
-    fcl::collide(tree_obj_, &cyl0_co, collision_request, collision_result);
-
-    if (collision_result.isCollision())
-        state_risk = 10.0;  // 15, 30
-    else
-    {
-        std::shared_ptr<fcl::Cylinder> cyl1(new fcl::Cylinder(fetch_base_radius_ + 0.4, fetch_base_height_));
-        fcl::CollisionObject cyl1_co(cyl1, fetch_tf);
-        collision_result.clear();
-
-        fcl::collide(tree_obj_, &cyl1_co, collision_request, collision_result);
-        if (collision_result.isCollision())
-            state_risk = 5.0;  // 10, 20
-    }
-
-    // ompl::tools::Profiler::End("RiskZones");
+    if (state_risk == 0.0)
+        state_risk = 1;
 
     return state_risk;
 }
@@ -280,11 +241,32 @@ double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state
                                                           const pedsim_msgs::AgentState agentState,
                                                           const ob::SpaceInformationPtr space) const
 {
-    // fcl::Transform3f fetch_tf;
-    // fetch_tf.setIdentity();
-    // fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], 0.0));
+    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
 
-    // double distance = ob::StateSpace::distance(state);
+    ob::ScopedState<> agentTf(space);
+    agentTf[0] = double(agentState.pose.position.x);  // x
+    agentTf[1] = double(agentState.pose.position.y);  // y
+
+    double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+
+    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
+                                   (state_r2->values[0] - agentState.pose.position.x));
+
+    double tethaOrientation;
+    if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
+        tethaOrientation = angleMotionDir;
+    else
+        tethaOrientation = angleGazeDir;
+
+    double basicPersonalSpaceVal =
+        Ap *
+        std::exp(
+            -(std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaX),
+                       2) +
+              std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaY),
+                       2)));
+
+    return basicPersonalSpaceVal;
 }
 
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const

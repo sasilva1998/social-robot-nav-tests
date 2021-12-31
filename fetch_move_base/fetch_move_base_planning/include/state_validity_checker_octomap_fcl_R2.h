@@ -65,6 +65,11 @@
 #include <iostream>
 #include <pedsim_msgs/AgentStates.h>
 #include <pedsim_msgs/AgentState.h>
+#include <nav_msgs/Odometry.h>
+
+// #include <tf2/LinearMath/Quaternion.h>
+#include <tf/tf.h>
+#include <math.h>
 
 // ROS-Octomap interface
 using octomap_msgs::GetOctomap;
@@ -137,7 +142,10 @@ private:
     std::vector<double> planning_bounds_x_, planning_bounds_y_;
     double fetch_base_radius_, fetch_base_height_;
     std::string octomap_service_;
+
+    // topics
     std::string sim_agents_topic;
+    std::string odometry_topic;
 
     double octree_res_;
 
@@ -150,6 +158,42 @@ private:
 
     // pedsim variables
     pedsim_msgs::AgentStatesConstPtr agentStates;
+
+    // odometry data
+    nav_msgs::OdometryConstPtr odomData;
+
+    //! basic social personal space parameters defined
+    /*
+     * amplitude of basic social personal space function
+     */
+    double Ap = 1;
+
+    /*
+     * standard deviation in X of gaussian basic social personal space function
+     */
+    double sigmaX = 1;
+
+    /*
+     * standard deviation in X of gaussian basic social personal space function
+     */
+    double sigmaY = 1;
+
+    // public:
+    /*
+     * distance between robot and agent
+     */
+    // double dRobotAgent = 1;
+    // double tethaAgent;
+
+    /*
+     * Angle defined when velocity is involved between robot and agent
+     */
+    double angleMotionDir = 1;
+
+    /*
+     * Gaze angle direction, specifically when agent is static
+     */
+    double angleGazeDir = 1;
 };
 
 #endif
