@@ -214,7 +214,7 @@ private:
     /*
      * field of view factor, sums with rest of factors
      */
-    double fOfView = 0.0;
+    double fFieldOfView = 0.0;
 
     /*
      * Angle defined when velocity is involved between robot and agent

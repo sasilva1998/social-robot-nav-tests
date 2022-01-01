@@ -311,13 +311,25 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
     else
         tethaOrientation = angleGazeDir;
 
+    bool robotInFront = false;
+    double modSigmaY;
+    double robotVelocity;
+
+    robotVelocity =
+        std::sqrt(std::pow(agentState.twist.linear.x, 2) + std::pow(agentState.twist.linear.y, 2));
+
+    if (robotInFront)
+        modSigmaY = (1 + robotVelocity * fv + fFront + fFieldOfView) * sigmaY;
+    else
+        modSigmaY = (1 + robotVelocity * fv + fFront) * sigmaY;
+
     double basicPersonalSpaceVal =
         Ap *
-        std::exp(
-            -(std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaX),
-                       2) +
-              std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaY),
-                       2)));
+        std::exp(-(
+            std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaX),
+                     2) +
+            std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * modSigmaY),
+                     2)));
 
     return basicPersonalSpaceVal;
 }
