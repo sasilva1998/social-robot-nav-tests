@@ -122,6 +122,13 @@ public:
      */
     virtual double checkSocialComfort(const ob::State *state, const ob::SpaceInformationPtr space) const;
 
+    /*
+     * Returns the cost value for the integration of the path defined on the equation that defines an extended
+     * social comfort zone model.
+     */
+    virtual double checkExtendedSocialComfort(const ob::State *state,
+                                              const ob::SpaceInformationPtr space) const;
+
     virtual bool isValidPoint(const ob::State *state) const;
 
     /*
@@ -166,17 +173,17 @@ private:
     /*
      * amplitude of basic social personal space function
      */
-    double Ap = 100;
+    double Ap = 1;
 
     /*
      * standard deviation in X of gaussian basic social personal space function
      */
-    double sigmaX = 1;
+    double sigmaX = 0.45;
 
     /*
      * standard deviation in X of gaussian basic social personal space function
      */
-    double sigmaY = 1;
+    double sigmaY = 0.45;
 
     // public:
     /*

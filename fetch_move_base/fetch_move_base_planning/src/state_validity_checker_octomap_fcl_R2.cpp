@@ -239,6 +239,25 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
     return state_risk;
 }
 
+double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *state,
+                                                               const ob::SpaceInformationPtr space) const
+{
+    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    double state_risk = 0.0;
+
+    for (int i = 0; i < agentStates->agent_states.size(); i++)
+    {
+        state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+    }
+
+    if (state_risk <= 1)
+        state_risk = 1;
+
+    // ROS_INFO_STREAM("The current state risk: " << state_risk);
+
+    return state_risk;
+}
+
 double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state,
                                                           const pedsim_msgs::AgentState agentState,
                                                           const ob::SpaceInformationPtr space) const
