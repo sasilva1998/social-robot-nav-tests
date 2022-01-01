@@ -290,6 +290,38 @@ double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state
     return basicPersonalSpaceVal;
 }
 
+double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *state,
+                                                             const pedsim_msgs::AgentState agentState,
+                                                             const ob::SpaceInformationPtr space) const
+{
+    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+
+    ob::ScopedState<> agentTf(space);
+    agentTf[0] = double(agentState.pose.position.x);  // x
+    agentTf[1] = double(agentState.pose.position.y);  // y
+
+    double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+
+    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
+                                   (state_r2->values[0] - agentState.pose.position.x));
+
+    double tethaOrientation;
+    if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
+        tethaOrientation = angleMotionDir;
+    else
+        tethaOrientation = angleGazeDir;
+
+    double basicPersonalSpaceVal =
+        Ap *
+        std::exp(
+            -(std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaX),
+                       2) +
+              std::pow(dRobotAgent * std::cos(tethaRobotAgent - tethaOrientation) / (std::sqrt(2) * sigmaY),
+                       2)));
+
+    return basicPersonalSpaceVal;
+}
+
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const
 {
     OcTreeNode *result;

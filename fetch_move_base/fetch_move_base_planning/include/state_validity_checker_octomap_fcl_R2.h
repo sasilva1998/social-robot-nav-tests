@@ -137,6 +137,13 @@ public:
     double basicPersonalSpaceFnc(const ob::State *state, const pedsim_msgs::AgentState agentState,
                                  const ob::SpaceInformationPtr space) const;
 
+    /*
+     * Calculates the value of the interaction between robot agent and social agent as the extended social
+     * model
+     */
+    double extendedPersonalSpaceFnc(const ob::State *state, const pedsim_msgs::AgentState agentState,
+                                    const ob::SpaceInformationPtr space) const;
+
 private:
     // ROS
     ros::NodeHandle nh_, local_nh_;
@@ -191,6 +198,23 @@ private:
      */
     // double dRobotAgent = 1;
     // double tethaAgent;
+
+    //! extra parameters for social space model
+
+    /*
+     * normalization factor, multiplied by agent velocity
+     */
+    double fv = 0.8;
+
+    /*
+     * frontal area factor, sums with rest of factors
+     */
+    double fFront = 0.2;
+
+    /*
+     * field of view factor, sums with rest of factors
+     */
+    double fOfView = 0.0;
 
     /*
      * Angle defined when velocity is involved between robot and agent
