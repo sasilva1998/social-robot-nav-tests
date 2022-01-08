@@ -66,6 +66,7 @@
 #include <pedsim_msgs/AgentStates.h>
 #include <pedsim_msgs/AgentState.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseStamped.h>
 
 // #include <tf2/LinearMath/Quaternion.h>
 #include <tf/tf.h>
@@ -144,6 +145,12 @@ public:
     double extendedPersonalSpaceFnc(const ob::State *state, const pedsim_msgs::AgentState agentState,
                                     const ob::SpaceInformationPtr space) const;
 
+    /*
+     * Calculates wether an agent is in the field of view of the robot.
+     */
+    bool isAgentInRFOV(const ob::State *state, const pedsim_msgs::AgentState agentState,
+                       const ob::SpaceInformationPtr space) const;
+
 private:
     // ROS
     ros::NodeHandle nh_, local_nh_;
@@ -160,6 +167,9 @@ private:
     // topics
     std::string sim_agents_topic;
     std::string odometry_topic;
+
+    // extra frames
+    std::string main_frame;
 
     double octree_res_;
 
@@ -225,6 +235,17 @@ private:
      * Gaze angle direction, specifically when agent is static
      */
     double angleGazeDir = 1;
+
+    //! parameters for robot field of view
+    /*
+     * This is the angle of field of view of the robot.
+     */
+    double robotAngleView = 1 / 4 * M_PI;
+
+    /*
+     * This is the angle of field of view of the robot.
+     */
+    double robotDistanceView = 2;
 };
 
 #endif

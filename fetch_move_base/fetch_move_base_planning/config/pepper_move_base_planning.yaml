@@ -32,3 +32,6 @@ goto_region_action: /pepper_goto_region_action
 
 # Social agents data topics
 sim_agents_topic: /pedsim_simulator/simulated_agents
+
+# extra frame option
+main_frame: world

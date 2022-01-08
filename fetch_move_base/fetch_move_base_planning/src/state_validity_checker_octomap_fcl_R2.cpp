@@ -31,6 +31,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     local_nh_.param("octomap_service", octomap_service_, octomap_service_);
     local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
     local_nh_.param("odometry_topic", odometry_topic, odometry_topic);
+    local_nh_.param("main_frame", main_frame, main_frame);
 
     octree_ = NULL;
 
@@ -72,6 +73,11 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
 
     ROS_INFO_STREAM("Retrieving robot odometry.");
     odomData = ros::topic::waitForMessage<nav_msgs::Odometry>(odometry_topic);
+
+    // ROS_INFO_STREAM("Retrieving robot odometry.");
+    // odomData = ros::topic::waitForMessage<nav_msgs::Odometry>(odometry_topic);
+
+    // tl.transformPose(main_frame, msg_hand, rel_hand_pos);
 }
 
 bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
@@ -247,7 +253,8 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
 
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
-        state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+        if (this->isAgentInRFOV(state, agentStates->agent_states[i], space))
+            state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
     }
 
     if (state_risk <= 1)
@@ -332,6 +339,22 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
                      2)));
 
     return basicPersonalSpaceVal;
+}
+
+bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
+                                                const pedsim_msgs::AgentState agentState,
+                                                const ob::SpaceInformationPtr space) const
+{
+    geometry_msgs::PoseStamped robotPose;
+    geometry_msgs::PoseStamped agentPose;
+
+    robotPose.pose = odomData->pose.pose;
+    agentPose.pose = agentState.pose;
+
+    tf::TransformListener tl;
+    tl.transformPose(main_frame, robotPose, agentPose);
+
+    return false;
 }
 
 bool OmFclStateValidityCheckerR2::isValidPoint(const ob::State *state) const
