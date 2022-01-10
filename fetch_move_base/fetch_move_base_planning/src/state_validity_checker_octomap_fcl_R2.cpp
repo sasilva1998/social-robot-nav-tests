@@ -369,7 +369,14 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
 
     double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
 
-    ROS_INFO_STREAM("Mod agent pose x: " << agentPose.pose.position.x);
+    if (dRobotAgent > robotDistanceView)
+    {
+        return false;
+    }
+
+    if (robot)
+
+        ROS_INFO_STREAM("Mod agent pose x: " << agentPose.pose.position.x);
     ROS_INFO_STREAM("Mod agent pose y: " << agentPose.pose.position.y);
 
     return false;
