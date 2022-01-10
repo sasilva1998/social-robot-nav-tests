@@ -229,6 +229,8 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
 double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
                                                        const ob::SpaceInformationPtr space) const
 {
+    // ROS_INFO_STREAM("Running social comfort model");
+
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 0.0;
 
@@ -251,10 +253,12 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 0.0;
 
+    // ROS_INFO_STREAM("Running extended social comfort model function");
+
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
         if (this->isAgentInRFOV(state, agentStates->agent_states[i], space))
-            state_risk += this->basicPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+            state_risk += this->extendedPersonalSpaceFnc(state, agentStates->agent_states[i], space);
     }
 
     if (state_risk <= 1)
@@ -351,8 +355,22 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     robotPose.pose = odomData->pose.pose;
     agentPose.pose = agentState.pose;
 
-    tf::TransformListener tl;
-    tl.transformPose(main_frame, robotPose, agentPose);
+    ROS_INFO_STREAM("First agent pose x: " << agentPose.pose.position.x);
+    ROS_INFO_STREAM("First agent pose y: " << agentPose.pose.position.y);
+
+    // tf::TransformListener tl;
+    // tl.transformPose(main_frame, robotPose, agentPose);
+
+    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+
+    ob::ScopedState<> agentTf(space);
+    agentTf[0] = double(agentState.pose.position.x);  // x
+    agentTf[1] = double(agentState.pose.position.y);  // y
+
+    double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+
+    ROS_INFO_STREAM("Mod agent pose x: " << agentPose.pose.position.x);
+    ROS_INFO_STREAM("Mod agent pose y: " << agentPose.pose.position.y);
 
     return false;
 }

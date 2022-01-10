@@ -27,6 +27,7 @@ ob::OptimizationObjectivePtr getSocialComfortObjective(const ob::SpaceInformatio
 ob::OptimizationObjectivePtr getExtendedSocialComfortObjective(const ob::SpaceInformationPtr &si,
                                                                bool motion_cost_interpolation)
 {
+    // ROS_INFO_STREAM("Sending extended social comfort objective");
     return ob::OptimizationObjectivePtr(new ExtendedSocialComfortObjective(si, motion_cost_interpolation));
 }
 

@@ -45,6 +45,7 @@ public:
     /** \brief Returns identity cost. */
     ob::Cost stateCost(const ob::State *s) const
     {
+        // ROS_INFO_STREAM("running path length");
         return identityCost();
     }
 
@@ -105,6 +106,7 @@ public:
     // increases, the state cost decreases.
     ob::Cost stateCost(const ob::State *s) const
     {
+        // ROS_INFO_STREAM("running clearance");
         return ob::Cost(1 / si_->getStateValidityChecker()->clearance(s));
     }
 };
@@ -132,6 +134,7 @@ public:
 
     ob::Cost stateCost(const ob::State *s) const
     {
+        // ROS_INFO_STREAM("running risk zones");
         std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
             std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
         return ob::Cost(state_vality_checker->checkRiskZones(s));
@@ -194,71 +197,7 @@ public:
 
     ob::Cost stateCost(const ob::State *s) const
     {
-        std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
-            std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
-        return ob::Cost(state_vality_checker->checkSocialComfort(s, si_));
-    }
-
-    ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const
-    {
-        if (interpolateMotionCost_)
-        {
-            ob::Cost totalCost = this->identityCost();
-
-            int nd = si_->getStateSpace()->validSegmentCount(s1, s2);
-            // nd = int(nd/10);
-
-            ob::State *test1 = si_->cloneState(s1);
-            ob::Cost prevStateCost = this->stateCost(test1);
-            if (nd > 1)
-            {
-                ob::State *test2 = si_->allocState();
-                for (int j = 1; j < nd; ++j)
-                {
-                    si_->getStateSpace()->interpolate(s1, s2, (double)j / (double)nd, test2);
-                    ob::Cost nextStateCost = this->stateCost(test2);
-                    totalCost = ob::Cost(
-                        totalCost.value() +
-                        this->trapezoid(prevStateCost, nextStateCost, si_->distance(test1, test2)).value());
-                    std::swap(test1, test2);
-                    prevStateCost = nextStateCost;
-                }
-                si_->freeState(test2);
-            }
-
-            // Lastly, add s2
-            totalCost = ob::Cost(
-                totalCost.value() +
-                this->trapezoid(prevStateCost, this->stateCost(s2), si_->distance(test1, s2)).value());
-
-            si_->freeState(test1);
-
-            ROS_INFO_STREAM("Total cost: " << totalCost);
-
-            return totalCost;
-        }
-        else
-        {
-            ROS_INFO_STREAM("Trapezoid cost: " << this->trapezoid(this->stateCost(s1), this->stateCost(s2),
-                                                                  si_->distance(s1, s2)));
-            return this->trapezoid(this->stateCost(s1), this->stateCost(s2), si_->distance(s1, s2));
-        }
-    }
-};
-
-class ExtendedSocialComfortObjective : public ob::StateCostIntegralObjective
-{
-private:
-public:
-    ExtendedSocialComfortObjective(const ob::SpaceInformationPtr &si, bool enableMotionCostInterpolation)
-      : ob::StateCostIntegralObjective(si, enableMotionCostInterpolation)
-    {
-    }
-
-    // in case of modifying the cost calculation function here it is where it should be done
-
-    ob::Cost stateCost(const ob::State *s) const
-    {
+        ROS_INFO_STREAM("Running social comfort model");
         std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
             std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
         return ob::Cost(state_vality_checker->checkExtendedSocialComfort(s, si_));
@@ -298,14 +237,81 @@ public:
 
             si_->freeState(test1);
 
-            ROS_INFO_STREAM("Total cost: " << totalCost);
+            // ROS_INFO_STREAM("Total cost: " << totalCost);
 
             return totalCost;
         }
         else
         {
-            ROS_INFO_STREAM("Trapezoid cost: " << this->trapezoid(this->stateCost(s1), this->stateCost(s2),
-                                                                  si_->distance(s1, s2)));
+            // ROS_INFO_STREAM("Trapezoid cost: " << this->trapezoid(this->stateCost(s1), this->stateCost(s2),
+            //                                                       si_->distance(s1, s2)));
+            return this->trapezoid(this->stateCost(s1), this->stateCost(s2), si_->distance(s1, s2));
+        }
+    }
+};
+
+class ExtendedSocialComfortObjective : public ob::StateCostIntegralObjective
+{
+private:
+public:
+    ExtendedSocialComfortObjective(const ob::SpaceInformationPtr &si, bool enableMotionCostInterpolation)
+      : ob::StateCostIntegralObjective(si, enableMotionCostInterpolation)
+    {
+        // ROS_INFO_STREAM("running extended social comfort objective checker");
+    }
+
+    // in case of modifying the cost calculation function here it is where it should be done
+
+    ob::Cost stateCost(const ob::State *s) const
+    {
+        // ROS_INFO_STREAM("running extended social comfort objective checker");
+        std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
+            std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
+        return ob::Cost(state_vality_checker->checkExtendedSocialComfort(s, si_));
+    }
+
+    ob::Cost motionCost(const ob::State *s1, const ob::State *s2) const
+    {
+        if (interpolateMotionCost_)
+        {
+            ob::Cost totalCost = this->identityCost();
+
+            int nd = si_->getStateSpace()->validSegmentCount(s1, s2);
+            // nd = int(nd/10);
+
+            ob::State *test1 = si_->cloneState(s1);
+            ob::Cost prevStateCost = this->stateCost(test1);
+            if (nd > 1)
+            {
+                ob::State *test2 = si_->allocState();
+                for (int j = 1; j < nd; ++j)
+                {
+                    si_->getStateSpace()->interpolate(s1, s2, (double)j / (double)nd, test2);
+                    ob::Cost nextStateCost = this->stateCost(test2);
+                    totalCost = ob::Cost(
+                        totalCost.value() +
+                        this->trapezoid(prevStateCost, nextStateCost, si_->distance(test1, test2)).value());
+                    std::swap(test1, test2);
+                    prevStateCost = nextStateCost;
+                }
+                si_->freeState(test2);
+            }
+
+            // Lastly, add s2
+            totalCost = ob::Cost(
+                totalCost.value() +
+                this->trapezoid(prevStateCost, this->stateCost(s2), si_->distance(test1, s2)).value());
+
+            si_->freeState(test1);
+
+            // ROS_INFO_STREAM("Total cost: " << totalCost);
+
+            return totalCost;
+        }
+        else
+        {
+            // ROS_INFO_STREAM("Trapezoid cost: " << this->trapezoid(this->stateCost(s1), this->stateCost(s2),
+            //                                                       si_->distance(s1, s2)));
             return this->trapezoid(this->stateCost(s1), this->stateCost(s2), si_->distance(s1, s2));
         }
     }

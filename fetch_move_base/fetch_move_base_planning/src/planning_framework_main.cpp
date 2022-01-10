@@ -598,9 +598,12 @@ void OnlinePlannFramework::planWithSimpleSetup()
     else if (optimization_objective_.compare("SocialComfort") == 0)  // Social Comfort
         simple_setup_->getProblemDefinition()->setOptimizationObjective(
             getSocialComfortObjective(si, motion_cost_interpolation_));
-    else if (optimization_objective_.compare("ExtendedSocialComfort") == 0)  // Social Comfort
+    else if (optimization_objective_.compare("ExtendedSocialComfort") == 0)
+    {  // Extended Social Comfort
+        // ROS_INFO_STREAM("initializing extended social comfort");
         simple_setup_->getProblemDefinition()->setOptimizationObjective(
             getExtendedSocialComfortObjective(si, motion_cost_interpolation_));
+    }
     else
         simple_setup_->getProblemDefinition()->setOptimizationObjective(getPathLengthObjective(si));
 
