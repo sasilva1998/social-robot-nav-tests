@@ -374,9 +374,17 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
         return false;
     }
 
-    if (robot)
+    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
+                                   (state_r2->values[0] - agentState.pose.position.x));
 
-        ROS_INFO_STREAM("Mod agent pose x: " << agentPose.pose.position.x);
+    if (tethaRobotAgent <)
+
+        if (tethaRobotAgent > ((M_PI - robotAngleView) / 2) &&
+            tethaRobotAgent < (M_PI - (M_PI - robotAngleView) / 2))
+        {
+        }
+
+    ROS_INFO_STREAM("Mod agent pose x: " << agentPose.pose.position.x);
     ROS_INFO_STREAM("Mod agent pose y: " << agentPose.pose.position.y);
 
     return false;
