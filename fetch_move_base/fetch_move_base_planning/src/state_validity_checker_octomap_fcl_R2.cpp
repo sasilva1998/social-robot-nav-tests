@@ -387,17 +387,18 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
+    double robotAngle = (M_PI/2)+yaw;
 
-    if (tethaRobotAgent <((M_PI/2)+yaw))
-        tethaRobotAgent = ((M_PI/2)+yaw)-tethaRobotAgent;
-    else if (tethaRobotAgent >((M_PI/2)+yaw))
-        tethaRobotAgent = tethaRobotAgent-((M_PI/2)+yaw);
+    if (tethaRobotAgent <robotAngle)
+        tethaRobotAgent = robotAngle-tethaRobotAgent;
+    else if (tethaRobotAgent >robotAngle)
+        tethaRobotAgent = tethaRobotAgent-robotAngle;
     else
         return true;
 
 
-    if ((tethaRobotAgent > fRobotView) &&
-        (tethaRobotAgent < fRobotView))
+    if ((abs(tethaRobotAgent) > fRobotView) &&
+        (abs(tethaRobotAgent) < fRobotView))
         return true;
 
     return false;
