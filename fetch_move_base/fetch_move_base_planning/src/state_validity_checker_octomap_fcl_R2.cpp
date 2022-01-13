@@ -252,13 +252,16 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
 {
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 0.0;
+    double current_state_risk = 0.0;
 
     // ROS_INFO_STREAM("Running extended social comfort model function");
 
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
         if (this->isAgentInRFOV(state, agentStates->agent_states[i], space))
-            state_risk += this->extendedPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+            current_state_risk = this->extendedPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+        if (current_state_risk > state_risk)
+            state_risk = current_state_risk;
     }
 
     if (state_risk <= 1)
@@ -374,31 +377,26 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
         return false;
     }
 
-    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
-                                   (state_r2->values[0] - agentState.pose.position.x));
+    double tethaRobotAgent = atan2((agentState.pose.position.y - state_r2->values[1]),
+                                   (agentState.pose.position.x - state_r2->values[0]));
 
-    tf::Quaternion q(
-        odomData->pose.pose.orientation.x,
-        odomData->pose.pose.orientation.y,
-        odomData->pose.pose.orientation.z,
-        odomData->pose.pose.orientation.z);
+    tf::Quaternion q(odomData->pose.pose.orientation.x, odomData->pose.pose.orientation.y,
+                     odomData->pose.pose.orientation.z, odomData->pose.pose.orientation.z);
 
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
-    double robotAngle = (M_PI/2)+yaw;
+    double robotAngle = (M_PI / 2) + yaw;
 
-    if (tethaRobotAgent <robotAngle)
-        tethaRobotAgent = robotAngle-tethaRobotAgent;
-    else if (tethaRobotAgent >robotAngle)
-        tethaRobotAgent = tethaRobotAgent-robotAngle;
+    if (tethaRobotAgent < robotAngle)
+        tethaRobotAgent = robotAngle - tethaRobotAgent;
+    else if (tethaRobotAgent > robotAngle)
+        tethaRobotAgent = tethaRobotAgent - robotAngle;
     else
         return true;
 
-
-    if ((abs(tethaRobotAgent) > fRobotView) &&
-        (abs(tethaRobotAgent) < fRobotView))
+    if ((abs(tethaRobotAgent) > fRobotView) && (abs(tethaRobotAgent) < fRobotView))
         return true;
 
     return false;
