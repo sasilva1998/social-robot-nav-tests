@@ -134,7 +134,7 @@ public:
 
     ob::Cost stateCost(const ob::State *s) const
     {
-        // ROS_INFO_STREAM("running risk zones");
+        ROS_INFO_STREAM("running risk zones");
         std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
             std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
         return ob::Cost(state_vality_checker->checkRiskZones(s));
@@ -197,7 +197,7 @@ public:
 
     ob::Cost stateCost(const ob::State *s) const
     {
-        ROS_INFO_STREAM("Running social comfort model");
+        // ROS_INFO_STREAM("Running social comfort model");
         std::shared_ptr<OmFclStateValidityCheckerR2> state_vality_checker =
             std::static_pointer_cast<OmFclStateValidityCheckerR2>(si_->getStateValidityChecker());
         return ob::Cost(state_vality_checker->checkExtendedSocialComfort(s, si_));

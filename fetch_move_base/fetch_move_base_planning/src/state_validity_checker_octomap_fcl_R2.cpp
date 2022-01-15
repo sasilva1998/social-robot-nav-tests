@@ -174,6 +174,7 @@ double OmFclStateValidityCheckerR2::clearance(const ob::State *state) const
 
 double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
 {
+    ROS_INFO_STREAM("running risk zone function");
     const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 1.0;
 
@@ -259,7 +260,11 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
         if (this->isAgentInRFOV(state, agentStates->agent_states[i], space))
+        {
+            ROS_INFO_STREAM("Agent in fov: " << agentStates->agent_states[i].id);
             current_state_risk = this->extendedPersonalSpaceFnc(state, agentStates->agent_states[i], space);
+            ROS_INFO_STREAM("agent risk: " << current_state_risk);
+        }
         if (current_state_risk > state_risk)
             state_risk = current_state_risk;
     }
@@ -351,15 +356,18 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
 bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
                                                 const pedsim_msgs::AgentState agentState,
                                                 const ob::SpaceInformationPtr space) const
+
 {
+    // ROS_INFO_STREAM("running agent fov fnc");
+
     geometry_msgs::PoseStamped robotPose;
     geometry_msgs::PoseStamped agentPose;
 
     robotPose.pose = odomData->pose.pose;
     agentPose.pose = agentState.pose;
 
-    ROS_INFO_STREAM("First agent pose x: " << agentPose.pose.position.x);
-    ROS_INFO_STREAM("First agent pose y: " << agentPose.pose.position.y);
+    // ROS_INFO_STREAM("First agent pose x: " << agentPose.pose.position.x);
+    // ROS_INFO_STREAM("First agent pose y: " << agentPose.pose.position.y);
 
     // tf::TransformListener tl;
     // tl.transformPose(main_frame, robotPose, agentPose);
@@ -370,31 +378,59 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     agentTf[0] = double(agentState.pose.position.x);  // x
     agentTf[1] = double(agentState.pose.position.y);  // y
 
-    double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+    // double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+
+    double dRobotAgent = std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
+                                   std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
     if (dRobotAgent > robotDistanceView)
     {
         return false;
     }
 
-    double tethaRobotAgent = atan2((agentState.pose.position.y - state_r2->values[1]),
-                                   (agentState.pose.position.x - state_r2->values[0]));
+    // ROS_INFO_STREAM("Agents in radius");
+
+    double tethaRobotAgent = atan2((agentState.pose.position.y - odomData->pose.pose.position.y),
+                                   (agentState.pose.position.x - odomData->pose.pose.position.x));
+
+    if (tethaRobotAgent < 0)
+    {
+        tethaRobotAgent = 2 * M_PI + tethaRobotAgent;
+    }
+
+    // ROS_INFO_STREAM("Angle robot agent: " << tethaRobotAgent);
 
     tf::Quaternion q(odomData->pose.pose.orientation.x, odomData->pose.pose.orientation.y,
-                     odomData->pose.pose.orientation.z, odomData->pose.pose.orientation.z);
+                     odomData->pose.pose.orientation.z, odomData->pose.pose.orientation.w);
 
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
-    double robotAngle = (M_PI / 2) + yaw;
+    double robotAngle = yaw;
 
-    if (tethaRobotAgent < robotAngle)
-        tethaRobotAgent = robotAngle - tethaRobotAgent;
-    else if (tethaRobotAgent > robotAngle)
-        tethaRobotAgent = tethaRobotAgent - robotAngle;
+    if (robotAngle < 0)
+    {
+        robotAngle = 2 * M_PI + robotAngle;
+    }
+
+    // ROS_INFO_STREAM("robot pure angle: " << robotAngle);
+
+    // if (tethaRobotAgent < robotAngle)
+    //     tethaRobotAgent = robotAngle - tethaRobotAgent;
+    // else if (tethaRobotAgent > robotAngle)
+    //     tethaRobotAgent = tethaRobotAgent - robotAngle;
+    // else
+    //     return true;
+
+    if (tethaRobotAgent > (robotAngle + M_PI))
+        tethaRobotAgent = abs(robotAngle + 2 * M_PI - tethaRobotAgent);
+    else if (robotAngle > (tethaRobotAgent + M_PI))
+        tethaRobotAgent = abs(tethaRobotAgent + 2 * M_PI - robotAngle);
     else
-        return true;
+        tethaRobotAgent = abs(tethaRobotAgent - robotAngle);
+
+    ROS_INFO_STREAM("diff angle: " << tethaRobotAgent);
 
     if ((abs(tethaRobotAgent) > fRobotView) && (abs(tethaRobotAgent) < fRobotView))
         return true;
