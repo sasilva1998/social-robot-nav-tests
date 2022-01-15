@@ -11,7 +11,7 @@ solving_time: 0.9
 opport_collision_check: True
 reuse_last_best_solution: True
 optimization_objective: SocialComfort #PathLength, RiskZones, SocialComfort, ExtendedSocialComfort
-# optimization_objective: RiskZone
+# optimization_objective: RiskZones
 motion_cost_interpolation: False
 start_prev_path_proj: False
 xy_goal_tolerance: 0.25
@@ -20,8 +20,8 @@ visualize_tree: True
 # Collision checking
 octomap_service: /octomap_binary
 global_map_topic: /map
-fetch_base_height: 0.4
-fetch_base_radius: 1.22
+fetch_base_height: 1.22
+fetch_base_radius: 0.2
 
 odometry_topic: /pepper/odom
 query_goal_topic: /fetch_move_base_planner/query_goal
