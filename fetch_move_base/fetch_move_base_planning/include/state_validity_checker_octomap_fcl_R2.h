@@ -240,9 +240,10 @@ private:
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotAngleView = 1 / 4 * M_PI;
+    double robotAngleView = 1 / 2 * M_PI;
 
-    double fRobotView = (M_PI - ((M_PI - robotAngleView) * 2));
+    // double fRobotView = (M_PI - ((M_PI - robotAngleView) * 2));
+    double fRobotView = 0.25 * M_PI;
 
     /*
      * This is the angle of field of view of the robot.

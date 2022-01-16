@@ -261,13 +261,15 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
     {
         if (this->isAgentInRFOV(state, agentStates->agent_states[i], space))
         {
-            ROS_INFO_STREAM("Agent in fov: " << agentStates->agent_states[i].id);
+            // ROS_INFO_STREAM("Agent in fov: " << agentStates->agent_states[i].id);
             current_state_risk = this->extendedPersonalSpaceFnc(state, agentStates->agent_states[i], space);
-            ROS_INFO_STREAM("agent risk: " << current_state_risk);
+            // ROS_INFO_STREAM("agent risk: " << current_state_risk);
         }
         if (current_state_risk > state_risk)
             state_risk = current_state_risk;
     }
+
+    ROS_INFO_STREAM("agent risk: " << state_risk);
 
     if (state_risk <= 1)
         state_risk = 1;
@@ -319,10 +321,21 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
     agentTf[0] = double(agentState.pose.position.x);  // x
     agentTf[1] = double(agentState.pose.position.y);  // y
 
-    double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+    // double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
 
-    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
-                                   (state_r2->values[0] - agentState.pose.position.x));
+    double dRobotAgent = std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
+                                   std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+
+    // double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
+    //                                (state_r2->values[0] - agentState.pose.position.x));
+
+    double tethaRobotAgent = atan2((odomData->pose.pose.position.y - agentState.pose.position.y),
+                                   (odomData->pose.pose.position.x - agentState.pose.position.x));
+
+    if (tethaRobotAgent < 0)
+    {
+        tethaRobotAgent = 2 * M_PI + tethaRobotAgent;
+    }
 
     double tethaOrientation;
     if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
@@ -430,9 +443,10 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     else
         tethaRobotAgent = abs(tethaRobotAgent - robotAngle);
 
-    ROS_INFO_STREAM("diff angle: " << tethaRobotAgent);
+    // ROS_INFO_STREAM("diff angle: " << tethaRobotAgent);
+    // ROS_INFO_STREAM("perm angle: " << fRobotView);
 
-    if ((abs(tethaRobotAgent) > fRobotView) && (abs(tethaRobotAgent) < fRobotView))
+    if (abs(tethaRobotAgent) < fRobotView)
         return true;
 
     return false;
