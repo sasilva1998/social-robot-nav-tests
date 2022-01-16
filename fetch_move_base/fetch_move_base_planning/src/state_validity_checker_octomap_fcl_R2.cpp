@@ -345,15 +345,15 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
 
     bool robotInFront = false;
     double modSigmaY;
-    double robotVelocity;
+    double agentVelocity;
 
-    robotVelocity =
+    agentVelocity =
         std::sqrt(std::pow(agentState.twist.linear.x, 2) + std::pow(agentState.twist.linear.y, 2));
 
     if (robotInFront)
-        modSigmaY = (1 + robotVelocity * fv + fFront + fFieldOfView) * sigmaY;
+        modSigmaY = (1 + agentVelocity * fv + fFront + fFieldOfView) * sigmaY;
     else
-        modSigmaY = (1 + robotVelocity * fv + fFront) * sigmaY;
+        modSigmaY = (1 + agentVelocity * fv + fFront) * sigmaY;
 
     double basicPersonalSpaceVal =
         Ap *
