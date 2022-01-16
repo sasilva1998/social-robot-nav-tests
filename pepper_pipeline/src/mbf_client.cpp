@@ -41,13 +41,13 @@ void solutionPathCallback(const fetch_move_base_msgs::Path2D::ConstPtr &msg)
 
     // ROS_INFO("Waypoints size: " << sizeof(msg->waypoints) << ".");
 
-    ROS_INFO_STREAM("Size of waypoints: " << msg->waypoints.size() << ".");
+    // ROS_INFO_STREAM("Size of waypoints: " << msg->waypoints.size() << ".");
 
     for (int i = 0; i < msg->waypoints.size(); i++)
     {
 
-        ROS_INFO_STREAM("X position added" << msg->waypoints[i].x << ".");
-        ROS_INFO_STREAM("Y position added" << msg->waypoints[i].y << ".");
+        // ROS_INFO_STREAM("X position added" << msg->waypoints[i].x << ".");
+        // ROS_INFO_STREAM("Y position added" << msg->waypoints[i].y << ".");
         pose.pose.position.x = msg->waypoints[i].x;
         pose.pose.position.y = msg->waypoints[i].y;
 
