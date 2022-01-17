@@ -190,7 +190,7 @@ private:
     /*
      * amplitude of basic social personal space function
      */
-    double Ap = 1;
+    double Ap = 1000000;
 
     /*
      * standard deviation in X of gaussian basic social personal space function
@@ -226,15 +226,15 @@ private:
      */
     double fFieldOfView = 0.0;
 
-    /*
-     * Angle defined when velocity is involved between robot and agent
-     */
-    double angleMotionDir = 1;
+    // /*
+    //  * Angle defined when velocity is involved between robot and agent
+    //  */
+    // double angleMotionDir = 1;
 
-    /*
-     * Gaze angle direction, specifically when agent is static
-     */
-    double angleGazeDir = 1;
+    // /*
+    //  * Gaze angle direction, specifically when agent is static
+    //  */
+    // double angleGazeDir = 1;
 
     //! parameters for robot field of view
     /*
@@ -243,12 +243,12 @@ private:
     double robotAngleView = 1 / 2 * M_PI;
 
     // double fRobotView = (M_PI - ((M_PI - robotAngleView) * 2));
-    double fRobotView = 0.25 * M_PI;
+    double fRobotView = 0.5 * M_PI;
 
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotDistanceView = 3;
+    double robotDistanceView = 4;
 };
 
 #endif

@@ -124,11 +124,35 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
         // ompl::tools::Profiler::End("collision");
         return false;
     }
-    else
+
+    //  agents collision checking
+
+    for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
-        // ompl::tools::Profiler::End("collision");
-        return true;
+        pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
+
+        double dRobotAgent =
+            std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
+                      std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+
+        if (dRobotAgent > robotDistanceView)
+        {
+            // FCL
+            // TODO: cambiar el collision object con el de un agente
+            fcl::Transform3f fetch_tf;
+            fetch_tf.setIdentity();
+            fetch_tf.setTranslation(
+                fcl::Vec3f(state_r2->values[0], state_r2->values[1], fetch_base_height_ / 2.0));
+            fcl::Quaternion3f qt0;
+            qt0.fromEuler(0.0, 0.0, 0.0);
+            fetch_tf.setQuatRotation(qt0);
+
+            fcl::CollisionObject vehicle_co(fetch_collision_solid_, fetch_tf);
+            fcl::collide(tree_obj_, &vehicle_co, collision_request, collision_result);
+        }
     }
+
+    return true;
 }
 
 double OmFclStateValidityCheckerR2::clearance(const ob::State *state) const
@@ -269,12 +293,12 @@ double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *
             state_risk = current_state_risk;
     }
 
-    ROS_INFO_STREAM("agent risk: " << state_risk);
-
     if (state_risk <= 1)
         state_risk = 1;
 
     // ROS_INFO_STREAM("The current state risk: " << state_risk);
+
+    // ROS_INFO_STREAM("agent risk: " << state_risk);
 
     return state_risk;
 }
@@ -291,14 +315,46 @@ double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state
 
     double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
 
-    double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
-                                   (state_r2->values[0] - agentState.pose.position.x));
+    // double tethaRobotAgent = atan2((state_r2->values[1] - agentState.pose.position.y),
+    //                                (state_r2->values[0] - agentState.pose.position.x));
+
+    // double tethaOrientation;
+    // if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
+    //     tethaOrientation = angleMotionDir;
+    // else
+    //     tethaOrientation = angleGazeDir;
+
+    double tethaRobotAgent = atan2((odomData->pose.pose.position.y - agentState.pose.position.y),
+                                   (odomData->pose.pose.position.x - agentState.pose.position.x));
+
+    if (tethaRobotAgent < 0)
+    {
+        tethaRobotAgent = 2 * M_PI + tethaRobotAgent;
+    }
 
     double tethaOrientation;
     if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
-        tethaOrientation = angleMotionDir;
+    {
+        double tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
+
+        // tethaOrientation = angleMotionDir;
+    }
     else
-        tethaOrientation = angleGazeDir;
+    {
+        tf::Quaternion q(agentState.pose.orientation.x, agentState.pose.orientation.y,
+                         agentState.pose.orientation.z, agentState.pose.orientation.w);
+
+        tf::Matrix3x3 m(q);
+        double roll, pitch, yaw;
+        m.getRPY(roll, pitch, yaw);
+
+        tethaOrientation = yaw;
+    }
+
+    if (tethaOrientation < 0)
+    {
+        tethaOrientation = 2 * M_PI + tethaOrientation;
+    }
 
     double basicPersonalSpaceVal =
         Ap *
@@ -315,11 +371,11 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
                                                              const pedsim_msgs::AgentState agentState,
                                                              const ob::SpaceInformationPtr space) const
 {
-    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    // const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
 
-    ob::ScopedState<> agentTf(space);
-    agentTf[0] = double(agentState.pose.position.x);  // x
-    agentTf[1] = double(agentState.pose.position.y);  // y
+    // ob::ScopedState<> agentTf(space);
+    // agentTf[0] = double(agentState.pose.position.x);  // x
+    // agentTf[1] = double(agentState.pose.position.y);  // y
 
     // double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
 
@@ -339,9 +395,27 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
 
     double tethaOrientation;
     if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
-        tethaOrientation = angleMotionDir;
+    {
+        double tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
+
+        // tethaOrientation = angleMotionDir;
+    }
     else
-        tethaOrientation = angleGazeDir;
+    {
+        tf::Quaternion q(agentState.pose.orientation.x, agentState.pose.orientation.y,
+                         agentState.pose.orientation.z, agentState.pose.orientation.w);
+
+        tf::Matrix3x3 m(q);
+        double roll, pitch, yaw;
+        m.getRPY(roll, pitch, yaw);
+
+        tethaOrientation = yaw;
+    }
+
+    if (tethaOrientation < 0)
+    {
+        tethaOrientation = 2 * M_PI + tethaOrientation;
+    }
 
     bool robotInFront = false;
     double modSigmaY;

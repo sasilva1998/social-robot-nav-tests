@@ -15,7 +15,7 @@ optimization_objective: SocialComfort #PathLength, RiskZones, SocialComfort, Ext
 motion_cost_interpolation: False
 start_prev_path_proj: False
 xy_goal_tolerance: 0.25
-visualize_tree: True
+visualize_tree: False
 
 # Collision checking
 octomap_service: /octomap_binary
