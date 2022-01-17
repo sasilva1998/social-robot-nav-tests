@@ -13,7 +13,7 @@
     <!-- additional parameters configured -->
     <arg name="force_obstacle" default="10.0" />
     <arg name="sigma_obstacle" default="0.2" />
-    <arg name="force_social" default="5.1" />
+    <arg name="force_social" default="7.5" />
     <arg name="force_group_gaze" default="3.0" />
     <arg name="force_group_coherence" default="2.0" />
     <arg name="force_group_repulsion" default="1.0" />

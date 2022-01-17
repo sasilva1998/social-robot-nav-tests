@@ -14,7 +14,7 @@ Panels:
         - /LaserScan1
         - /TF1/Frames1
       Splitter Ratio: 0.7236841917037964
-    Tree Height: 892
+    Tree Height: 441
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -746,7 +746,29 @@ Visualization Manager:
       Marker Topic: /fetch_move_base_planner/solution_path
       Name: Marker
       Namespaces:
-        {}
+        online_planner_result_path: true
+        online_planner_rrt: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /pedsim_visualizer/waypoints
+      Name: MarkerArray
+      Namespaces:
+        cafeteria: true
+        end_hall: true
+        entrance_room: true
+        information_room: true
+        middle_hall: true
+        office1: true
+        office2: true
+        office3: true
+        office4: true
+        poster: true
+        signal: true
+        three_quarter_hall: true
+        ticket_dispensor: true
+        waiting_room: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -777,25 +799,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 16.94986343383789
+      Distance: 15.670342445373535
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 4.003429412841797
-        Y: -9.288986206054688
-        Z: -5.7320048654219136e-6
+        X: 3.030510663986206
+        Y: -8.91895580291748
+        Z: -9.546702131046914e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2897971868515015
+      Pitch: 1.2997971773147583
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.7085747718811035
+      Yaw: 4.728575229644775
     Saved: ~
 Window Geometry:
   Displays:
