@@ -135,20 +135,25 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                       std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
-        if (dRobotAgent > robotDistanceView)
+        if (dRobotAgent < robotDistanceView - 2)
         {
             // FCL
             // TODO: cambiar el collision object con el de un agente
-            fcl::Transform3f fetch_tf;
-            fetch_tf.setIdentity();
-            fetch_tf.setTranslation(
-                fcl::Vec3f(state_r2->values[0], state_r2->values[1], fetch_base_height_ / 2.0));
+            fcl::Transform3f agent_tf;
+            agent_tf.setIdentity();
+            agent_tf.setTranslation(
+                fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
             fcl::Quaternion3f qt0;
             qt0.fromEuler(0.0, 0.0, 0.0);
-            fetch_tf.setQuatRotation(qt0);
+            agent_tf.setQuatRotation(qt0);
 
-            fcl::CollisionObject vehicle_co(fetch_collision_solid_, fetch_tf);
-            fcl::collide(tree_obj_, &vehicle_co, collision_request, collision_result);
+            fcl::CollisionObject agent_co(fetch_collision_solid_, agent_tf);
+            fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
+
+            if (collision_result.isCollision())
+            {
+                return false;
+            }
         }
     }
 
