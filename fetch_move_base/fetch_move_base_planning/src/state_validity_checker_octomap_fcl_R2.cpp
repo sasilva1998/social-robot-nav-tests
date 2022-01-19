@@ -280,7 +280,7 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
 double OmFclStateValidityCheckerR2::checkExtendedSocialComfort(const ob::State *state,
                                                                const ob::SpaceInformationPtr space) const
 {
-    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    // const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 0.0;
     double current_state_risk = 0.0;
 
@@ -452,11 +452,11 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
 {
     // ROS_INFO_STREAM("running agent fov fnc");
 
-    geometry_msgs::PoseStamped robotPose;
-    geometry_msgs::PoseStamped agentPose;
+    // geometry_msgs::PoseStamped robotPose;
+    // geometry_msgs::PoseStamped agentPose;
 
-    robotPose.pose = odomData->pose.pose;
-    agentPose.pose = agentState.pose;
+    // robotPose.pose = odomData->pose.pose;
+    // agentPose.pose = agentState.pose;
 
     // ROS_INFO_STREAM("First agent pose x: " << agentPose.pose.position.x);
     // ROS_INFO_STREAM("First agent pose y: " << agentPose.pose.position.y);
@@ -464,13 +464,15 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     // tf::TransformListener tl;
     // tl.transformPose(main_frame, robotPose, agentPose);
 
-    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    // const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
 
-    ob::ScopedState<> agentTf(space);
-    agentTf[0] = double(agentState.pose.position.x);  // x
-    agentTf[1] = double(agentState.pose.position.y);  // y
+    // ob::ScopedState<> agentTf(space);
+    // agentTf[0] = double(agentState.pose.position.x);  // x
+    // agentTf[1] = double(agentState.pose.position.y);  // y
 
     // double dRobotAgent = space->distance(state, agentTf->as<ob::State>());
+
+    //  dRobotAgent -
 
     double dRobotAgent = std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                                    std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
