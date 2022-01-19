@@ -101,20 +101,26 @@
         <!-- Moving Pepper to its home state -->
         <!-- <node pkg="test_pepper_common_bringup" type="pepper_moveit_home" name="pepper_moveit_home" output="screen" /> -->
 
+        <!-- 
         <group unless="$(arg mapping)">
             <group unless="$(arg localization)">
                 <group unless="$(arg navigation)">
                     <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world odom 100" />
                 </group>
             </group>
-        </group>
+        </group> -->
     </group>
 
     <!-- Mapping! -->
 
     <group if="$(arg mapping)">
 
+        <!-- testing controllers -->
+        <!-- to use mbf -->
         <node pkg="pepper_pipeline" type="mbf_client" name="mbf_path_execute" output="screen" />
+
+        <!-- to use own Juan controller -->
+        <!-- <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" /> -->
 
         <group if="$(arg online)">
             <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
@@ -124,7 +130,7 @@
                 <!-- <param name="filter_ground" value="true" />
                     <param name="ground_filter/distance" value="0.2" />
                     <param name="ground_filter/plane_distance" type="double" value="0.2" /> -->
-                <param name="pointcloud_min_z" type="double" value="0.2" />
+                <param name="pointcloud_min_z" type="double" value="0.1" />
                 <param name="latch" type="bool" value="false" />
                 <remap from="cloud_in" to="/pepper/camera/depth/points" />
             </node>
@@ -133,7 +139,7 @@
         <group unless="$(arg online)">
             <!-- with octomap -->
             <!-- pre-made map for localization -->
-            <arg name="map_file" default="$(find pepper_pipeline)/map/offline_map_3.bt" />
+            <arg name="map_file" default="$(find pepper_pipeline)/map/offline_complete_map.bt" />
             <!-- Map server -->
             <node pkg="octomap_server" name="octomap_server" type="octomap_server_node" args="$(arg map_file)" />
         </group>

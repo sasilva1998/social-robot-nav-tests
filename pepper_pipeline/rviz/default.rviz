@@ -73,10 +73,10 @@ Visualization Manager:
           Marker Topic: /pedsim_visualizer/walls
           Name: Walls
           Namespaces:
-            "": true
+            {}
           Queue Size: 0
           Value: true
-      Enabled: true
+      Enabled: false
       Name: Pedsim-Visuals
     - Class: rviz/Group
       Displays:
@@ -746,7 +746,7 @@ Visualization Manager:
       Marker Topic: /fetch_move_base_planner/solution_path
       Name: Marker
       Namespaces:
-        {}
+        online_planner_result_path: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -798,25 +798,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 19.24846649169922
+      Distance: 18.6190242767334
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -3.8349552154541016
-        Y: -8.867016792297363
+        X: 1.712830901145935
+        Y: -6.997046947479248
         Z: -9.546702131046914e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2997971773147583
+      Pitch: 1.2297966480255127
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.728575229644775
+      Yaw: 4.733572959899902
     Saved: ~
 Window Geometry:
   Displays:

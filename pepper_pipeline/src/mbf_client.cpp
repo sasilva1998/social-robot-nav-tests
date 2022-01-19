@@ -84,6 +84,7 @@ void solutionPathCallback(const fetch_move_base_msgs::Path2D::ConstPtr &msg)
 
     // goal.order = 20;
     ac.sendGoal(goal);
+    ros::Duration(0.010).sleep();
 
     // wait for the action to return
     // bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));

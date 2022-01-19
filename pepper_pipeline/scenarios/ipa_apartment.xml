@@ -5433,19 +5433,23 @@
         <addwaypoint id="information_room" />
         <addwaypoint id="waiting_room" />
     </agent>
+
     <agent x="1.02" y="-1.95" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="entrance_room" />
         <addwaypoint id="information_room" />
     </agent>
+
     <agent x="3.778" y="-6.74" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="waiting_room" />
         <addwaypoint id="entrance_room" />
     </agent>
-    <agent x="0.216" y="-7.6" n="1" dx="0.5" dy="0.5" type="1" />
+
+    <!-- <agent x="0.216" y="-7.6" n="1" dx="0.5" dy="0.5" type="1" />;. -->
     <agent x="-0.53" y="-3.61" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="entrance_room" />
         <addwaypoint id="waiting_room" />
     </agent>
+
     <agent x="3.45" y="-0.411" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="entrance_room" />
         <addwaypoint id="information_room" />
