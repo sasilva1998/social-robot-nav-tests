@@ -10,7 +10,7 @@ Modified by Juan D. Hernandez Vega (juandhv@rice.edu)
 """
 
 # Copyright (c) 2015 Fetch Robotics Inc.
-# Copyright (c) 2013-2014 Unbounded Robotics Inc. 
+# Copyright (c) 2013-2014 Unbounded Robotics Inc.
 # All right reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -21,8 +21,8 @@ Modified by Juan D. Hernandez Vega (juandhv@rice.edu)
 #   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-#   * Neither the name of Unbounded Robotics Inc. nor the names of its 
-#     contributors may be used to endorse or promote products derived 
+#   * Neither the name of Unbounded Robotics Inc. nor the names of its
+#     contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -50,6 +50,7 @@ from geometry_msgs.msg import PointStamped
 from nav_msgs.msg import Path
 from geometry_msgs.msg import Twist
 
+
 class NavHeadController:
     """
     Navigation Controller class
@@ -59,10 +60,10 @@ class NavHeadController:
         """
         Constructor
         """
-        
-        #=======================================================================
+
+        # =======================================================================
         # Initial values
-        #=======================================================================
+        # =======================================================================
         self.controller_active_ = False
 
         # pose and lock
@@ -73,19 +74,21 @@ class NavHeadController:
 
         self.tf_listener_ = TransformListener()
 
-        self.head_controller_client_ = actionlib.SimpleActionClient("head_controller/point_head", PointHeadAction)
+        self.head_controller_client_ = actionlib.SimpleActionClient(
+            "head_controller/point_head", PointHeadAction
+        )
         self.head_controller_client_.wait_for_server()
 
-        #self.plan_sub = rospy.Subscriber("move_base/TrajectoryPlannerROS/local_plan", Path, self.planCallback)
-        #self.stat_sub = rospy.Subscriber("move_base/status", GoalStatusArray, self.statCallback)
+        # self.plan_sub = rospy.Subscriber("move_base/TrajectoryPlannerROS/local_plan", Path, self.planCallback)
+        # self.stat_sub = rospy.Subscriber("move_base/status", GoalStatusArray, self.statCallback)
         self.cmd_vel_sub_ = rospy.Subscriber("cmd_vel", Twist, self.cmdVelCallback)
-        
-        #=======================================================================
+
+        # =======================================================================
         # Timer
-        #=======================================================================
+        # =======================================================================
         rospy.Timer(rospy.Duration(1.0), self.checkStatus)
         return
-    
+
     def checkStatus(self, event):
         """
         Check controller status (active)
@@ -102,15 +105,13 @@ class NavHeadController:
 
     def cmdVelCallback(self, cmd_vel_msg):
         """
-        Callback to base velocity commands 
+        Callback to base velocity commands
         """
         self.last_time_cmd_vel_ = rospy.Time.now()
         return
-    
+
     def statCallback(self, msg):
-        """
-         
-        """
+        """ """
         goal = False
         for status in msg.status_list:
             if status.status == GoalStatus.ACTIVE:
@@ -124,16 +125,23 @@ class NavHeadController:
         pose = pose_stamped.pose
 
         # look ahead one meter
-        R = quaternion_matrix([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+        R = quaternion_matrix(
+            [
+                pose.orientation.x,
+                pose.orientation.y,
+                pose.orientation.z,
+                pose.orientation.w,
+            ]
+        )
         point = [1, 0, 0, 1]
-        M = R*point
+        M = R * point
 
         p = PointStamped()
         p.header.frame_id = pose_stamped.header.frame_id
         p.header.stamp = rospy.Time(0)
-        p.point.x += pose_stamped.pose.position.x + M[0,0]
-        p.point.y += pose_stamped.pose.position.y + M[1,0]
-        p.point.z += pose_stamped.pose.position.z + M[2,0]
+        p.point.x += pose_stamped.pose.position.x + M[0, 0]
+        p.point.y += pose_stamped.pose.position.y + M[1, 0]
+        p.point.z += pose_stamped.pose.position.z + M[2, 0]
 
         # transform to base_link
         p = self.tf_listener_.transformPoint("base_link", p)
@@ -153,7 +161,7 @@ class NavHeadController:
 
     def loop(self):
         """
-        Controller loop 
+        Controller loop
         """
         while not rospy.is_shutdown():
             if self.controller_active_:
@@ -183,7 +191,8 @@ class NavHeadController:
             else:
                 rospy.sleep(1.0)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     rospy.init_node("tilt_head_node")
     h = NavHeadController()
     h.loop()
