@@ -11,6 +11,10 @@ controllers:
 #     type: dwa_local_planner/DWAPlannerROS
 
 # controllers:
+#   - name: teb_local_planner/TebLocalPlannerROS
+#     type: teb_local_planner/TebLocalPlannerROS
+
+# controllers:
 #   - name: base_local_planner/TrayectoryPlannerROS
 #     type: base_local_planner/TrayectoryPlannerROS
 
@@ -20,7 +24,7 @@ controller_patience: 3.0
 planner_frequency: 1.0
 planner_patience: 5.0
 
-recovery_enabled: true
+recovery_enabled: false
 
 oscillation_timeout: 10.0
 oscillation_distance: 0.2

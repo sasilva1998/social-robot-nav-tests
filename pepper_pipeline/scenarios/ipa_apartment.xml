@@ -5520,7 +5520,7 @@
     </agent>
 
     <!-- AGENT CLUSTERS -->
-    <agent x="-14.2" y="-4.2" n="3" dx="3" dy="3" type="0">
+    <!-- <agent x="-14.2" y="-4.2" n="3" dx="3" dy="3" type="0">
         <addwaypoint id="ticket_dispensor" />
         <addwaypoint id="waiting_room" />
         <addwaypoint id="entrance_room" />
@@ -5528,7 +5528,7 @@
         <addqueue id="klm" />
         <addwaypoint id="waiting_room" />
         <addwaypoint id="information_room" />
-    </agent>
+    </agent> -->
 
 
 </scenario>

@@ -13,7 +13,7 @@
     <!-- additional parameters configured -->
     <arg name="force_obstacle" default="10.0" />
     <arg name="sigma_obstacle" default="0.2" />
-    <arg name="force_social" default="7.5" />
+    <arg name="force_social" default="10" />
     <arg name="force_group_gaze" default="3.0" />
     <arg name="force_group_coherence" default="2.0" />
     <arg name="force_group_repulsion" default="1.0" />
@@ -21,7 +21,7 @@
     <arg name="force_wall" default="2.0" />
 
     <arg name="scenario_file" default="ipa_apartment.xml" />
-    <arg name="detect_frozen_agents" default="false" />
+    <arg name="detect_frozen_agents" default="true" />
     <arg name="walls_scale" default="0.1" />
 
     <!--additional parameters for pedsim and robot simulation-->
