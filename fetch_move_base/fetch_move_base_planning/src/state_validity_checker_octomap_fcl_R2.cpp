@@ -56,6 +56,8 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
 
         fetch_collision_solid_.reset(new fcl::Cylinder(fetch_base_radius_, fetch_base_height_));
 
+        agent_collision_solid_.reset(new fcl::Cylinder(0.5, fetch_base_height_));
+
         octree_res_ = octree_->getResolution();
         octree_->getMetricMin(octree_min_x_, octree_min_y_, octree_min_z_);
         octree_->getMetricMax(octree_max_x_, octree_max_y_, octree_max_z_);
@@ -127,6 +129,9 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
 
     //  agents collision checking
 
+    double robotVelocity =
+        std::sqrt(std::pow(odomData->twist.twist.linear.x, 2) + std::pow(odomData->twist.twist.linear.y, 2));
+
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
         pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
@@ -135,7 +140,7 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                       std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
-        if (dRobotAgent < robotDistanceView - 2)
+        if (dRobotAgent < (robotDistanceView / robotVelocityThreshold * robotVelocity))
         {
             // FCL
             // TODO: cambiar el collision object con el de un agente
@@ -147,7 +152,7 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             qt0.fromEuler(0.0, 0.0, 0.0);
             agent_tf.setQuatRotation(qt0);
 
-            fcl::CollisionObject agent_co(fetch_collision_solid_, agent_tf);
+            fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
             fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
 
             if (collision_result.isCollision())
@@ -340,7 +345,7 @@ double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state
     double tethaOrientation;
     if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
     {
-        double tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
+        tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
 
         // tethaOrientation = angleMotionDir;
     }
@@ -401,7 +406,7 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
     double tethaOrientation;
     if (abs(agentState.twist.linear.x) > 0 || abs(agentState.twist.linear.y) > 0)
     {
-        double tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
+        tethaOrientation = atan2(agentState.twist.linear.y, agentState.twist.linear.x);
 
         // tethaOrientation = angleMotionDir;
     }
@@ -477,7 +482,10 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     double dRobotAgent = std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                                    std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
-    if (dRobotAgent > robotDistanceView)
+    double robotVelocity =
+        std::sqrt(std::pow(odomData->twist.twist.linear.x, 2) + std::pow(odomData->twist.twist.linear.y, 2));
+
+    if (dRobotAgent > (robotDistanceView / robotVelocityThreshold * robotVelocity))
     {
         return false;
     }

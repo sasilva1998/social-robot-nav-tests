@@ -177,6 +177,7 @@ private:
     fcl::OcTree *tree_;
     fcl::CollisionObject *tree_obj_;
     std::shared_ptr<fcl::Cylinder> fetch_collision_solid_;
+    std::shared_ptr<fcl::Cylinder> agent_collision_solid_;
 
     bool opport_collision_check_;
 
@@ -248,7 +249,12 @@ private:
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotDistanceView = 4;
+    double robotDistanceView = 10;
+
+    /*
+     * This is the velocity that will create de maximum distance for agent evaluation
+     */
+    double robotVelocityThreshold = 0.55;
 };
 
 #endif

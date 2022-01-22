@@ -21,9 +21,9 @@ visualize_tree: False
 octomap_service: /octomap_binary
 global_map_topic: /map
 fetch_base_height: 1.22
-fetch_base_radius: 0.3
+fetch_base_radius: 0.325
 
-odometry_topic: /pepper/odom
+odometry_topic: /pepper/odom_groundtruth
 query_goal_topic: /fetch_move_base_planner/query_goal
 solution_path_topic: /fetch_move_base_planner/solution_path
 
