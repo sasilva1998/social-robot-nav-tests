@@ -122,14 +122,11 @@
         <!-- to use own Juan controller -->
         <!-- <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" /> -->
 
+
         <group if="$(arg online)">
             <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
                 <param name="resolution" value="0.05" />
                 <param name="frame_id" type="string" value="odom" />
-                <!-- <param name="sensor_model/max_range" value="5.0" /> -->
-                <!-- <param name="filter_ground" value="true" />
-                    <param name="ground_filter/distance" value="0.2" />
-                    <param name="ground_filter/plane_distance" type="double" value="0.2" /> -->
                 <param name="pointcloud_min_z" type="double" value="0.1" />
                 <param name="latch" type="bool" value="false" />
                 <remap from="cloud_in" to="/pepper/camera/depth/points" />
@@ -221,6 +218,8 @@
             <rosparam file="$(find pepper_pipeline)/param/local_costmap_params.yaml" command="load" />
             <rosparam file="$(find pepper_pipeline)/param/global_costmap_params.yaml" command="load" />
             <rosparam file="$(find pepper_pipeline)/param/move_base_flex.yaml" command="load" />
+            <!-- <rosparam file="$(find pepper_pipeline)/param/dwa_local_planner.yaml" command="load" ns="dwa_local_planner/DWAPlannerROS" /> -->
+            <rosparam file="$(find pepper_pipeline)/param/eband_local_planner.yaml" command="load" ns="eband_local_planner/EBandPlannerROS" />
             <remap from="cmd_vel" to="/pepper/cmd_vel" />
             <remap from="odom" to="/pepper/odom_groundtruth" />
         </node>

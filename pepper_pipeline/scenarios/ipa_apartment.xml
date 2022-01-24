@@ -5439,18 +5439,18 @@
         <addwaypoint id="information_room" />
     </agent>
 
-    <agent x="3.778" y="-6.74" n="1" dx="0.5" dy="0.5" type="1">
+    <agent x="-12" y="9.42" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="waiting_room" />
         <addwaypoint id="entrance_room" />
     </agent>
 
     <!-- <agent x="0.216" y="-7.6" n="1" dx="0.5" dy="0.5" type="1" />;. -->
-    <agent x="-0.53" y="-3.61" n="1" dx="0.5" dy="0.5" type="1">
+    <agent x="-12.99" y="-1.077" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="entrance_room" />
         <addwaypoint id="waiting_room" />
     </agent>
 
-    <agent x="3.45" y="-0.411" n="1" dx="0.5" dy="0.5" type="1">
+    <agent x="-12" y="-4" n="1" dx="0.5" dy="0.5" type="1">
         <addwaypoint id="entrance_room" />
         <addwaypoint id="information_room" />
         <addwaypoint id="waiting_room" />
@@ -5496,27 +5496,27 @@
     </agent>
 
     <agent x="-10.2" y="-1.2" n="1" dx="2" dy="2" type="0">
-        <addwaypoint id="ticket_dispensor" />
-        <addwaypoint id="middle_hall" />
+        <addwaypoint id="poster" />
+        <!-- <addwaypoint id="middle_hall" /> -->
         <addwaypoint id="end_hall" />
-        <addwaypoint id="middle_hall" />
+        <!-- <addwaypoint id="middle_hall" />
         <addwaypoint id="waiting_room" />
         <addwaypoint id="information_room" />
         <addwaypoint id="waiting_room" />
         <addwaypoint id="entrance_room" />
-        <addwaypoint id="cafeteria" />
+        <addwaypoint id="cafeteria" /> -->
     </agent>
 
     <agent x="-10.2" y="-1.2" n="1" dx="2" dy="2" type="1" random="1">
-        <addwaypoint id="ticket_dispensor" />
-        <addwaypoint id="middle_hall" />
+        <!-- <addwaypoint id="ticket_dispensor" />
+        <addwaypoint id="middle_hall" /> -->
         <addwaypoint id="end_hall" />
-        <addwaypoint id="middle_hall" />
+        <!-- <addwaypoint id="middle_hall" />
         <addwaypoint id="waiting_room" />
         <addwaypoint id="information_room" />
         <addwaypoint id="waiting_room" />
-        <addwaypoint id="entrance_room" />
-        <addwaypoint id="cafeteria" />
+        <addwaypoint id="entrance_room" /> -->
+        <addwaypoint id="poster" />
     </agent>
 
     <!-- AGENT CLUSTERS -->

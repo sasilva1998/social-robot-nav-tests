@@ -13,7 +13,7 @@
     <!-- additional parameters configured -->
     <arg name="force_obstacle" default="10.0" />
     <arg name="sigma_obstacle" default="0.2" />
-    <arg name="force_social" default="10" />
+    <arg name="force_social" default="20" />
     <arg name="force_group_gaze" default="3.0" />
     <arg name="force_group_coherence" default="2.0" />
     <arg name="force_group_repulsion" default="1.0" />
@@ -45,8 +45,8 @@
         <arg name="max_robot_speed" value="1.5" />
         <arg name="robot_mode" value="0" />
         <arg name="enable_groups" value="true" />
-        <arg name="pose_initial_x" value="10.0" />
-        <arg name="pose_initial_y" value="15.0" />
+        <arg name="pose_initial_x" value="0.0" />
+        <arg name="pose_initial_y" value="0.0" />
         <arg name="pose_initial_theta" value="0.7" />
         <arg name="detect_frozen_agents" value="$(arg detect_frozen_agents)" />
         <!-- extra parameters -->
