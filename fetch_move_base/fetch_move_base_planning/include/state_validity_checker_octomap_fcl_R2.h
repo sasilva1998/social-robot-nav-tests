@@ -249,7 +249,7 @@ private:
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotDistanceView = 10;
+    double robotDistanceView = 6;
 
     /*
      * This is the velocity that will create de maximum distance for agent evaluation

@@ -132,6 +132,15 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
     double robotVelocity =
         std::sqrt(std::pow(odomData->twist.twist.linear.x, 2) + std::pow(odomData->twist.twist.linear.y, 2));
 
+    double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
+
+    if (actualFOVDistance < 1)
+    {
+        actualFOVDistance = 1;
+    }
+
+    // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
+
     for (int i = 0; i < agentStates->agent_states.size(); i++)
     {
         pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
@@ -140,7 +149,7 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                       std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
-        if (dRobotAgent < (robotDistanceView / robotVelocityThreshold * robotVelocity))
+        if (dRobotAgent < actualFOVDistance)
         {
             // FCL
             // TODO: cambiar el collision object con el de un agente
@@ -266,7 +275,7 @@ double OmFclStateValidityCheckerR2::checkSocialComfort(const ob::State *state,
 {
     // ROS_INFO_STREAM("Running social comfort model");
 
-    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    // const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
     double state_risk = 0.0;
 
     for (int i = 0; i < agentStates->agent_states.size(); i++)
@@ -317,7 +326,7 @@ double OmFclStateValidityCheckerR2::basicPersonalSpaceFnc(const ob::State *state
                                                           const pedsim_msgs::AgentState agentState,
                                                           const ob::SpaceInformationPtr space) const
 {
-    const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
+    // const ob::RealVectorStateSpace::StateType *state_r2 = state->as<ob::RealVectorStateSpace::StateType>();
 
     ob::ScopedState<> agentTf(space);
     agentTf[0] = double(agentState.pose.position.x);  // x
@@ -485,7 +494,16 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
     double robotVelocity =
         std::sqrt(std::pow(odomData->twist.twist.linear.x, 2) + std::pow(odomData->twist.twist.linear.y, 2));
 
-    if (dRobotAgent > (robotDistanceView / robotVelocityThreshold * robotVelocity))
+    double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
+
+    if (actualFOVDistance < 1)
+    {
+        actualFOVDistance = 1;
+    }
+
+    // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
+
+    if (dRobotAgent > actualFOVDistance)
     {
         return false;
     }
