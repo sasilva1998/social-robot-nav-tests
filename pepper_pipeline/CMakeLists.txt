@@ -240,3 +240,7 @@ add_executable(mbf_client src/mbf_client.cpp)
 target_link_libraries(mbf_client ${catkin_LIBRARIES})
 add_dependencies(mbf_client ${catkin_EXPORTED_TARGETS} fetch_move_base_msgs_generate_messages_cpp ${fetch_move_base_msgs_EXPORTED_TARGETS})
 
+
+add_executable(odom_publisher src/odom_publisher.cpp)
+target_link_libraries(odom_publisher ${catkin_LIBRARIES})
+add_dependencies(odom_publisher ${catkin_EXPORTED_TARGETS} fetch_move_base_msgs_generate_messages_cpp ${fetch_move_base_msgs_EXPORTED_TARGETS})
