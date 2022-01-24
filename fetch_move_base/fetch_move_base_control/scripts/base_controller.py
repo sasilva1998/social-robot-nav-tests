@@ -182,6 +182,7 @@ class Controller(object):
                             control_input.linear.x = self.max_vel_
                         else:
                             control_input.linear.x = liner_speed
+
                     if control_input.angular.z < -self.max_turn_rate_:
                         control_input.angular.z = -self.max_turn_rate_
                     elif control_input.angular.z > self.max_turn_rate_:
