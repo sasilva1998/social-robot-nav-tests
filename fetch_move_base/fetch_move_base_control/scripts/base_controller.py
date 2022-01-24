@@ -124,7 +124,7 @@ class Controller(object):
     def receiveControlPathCallback(self, path_2d_msg):
         """Callback to receive path (list of waypoints)"""
         self.solution_path_wps_ = []
-        for i in range(len(path_2d_msg.waypoints)):
+        for i in range(1, len(path_2d_msg.waypoints)):
             waypoint = path_2d_msg.waypoints[i]
             distance_to_wp = math.sqrt(
                 math.pow(waypoint.x - self.current_position_[0], 2.0)
@@ -142,6 +142,7 @@ class Controller(object):
         controller_state = 0
         while not rospy.is_shutdown():
             if len(self.solution_path_wps_) > 0:
+                # print(self.solution_path_wps_)
                 self.desired_position_[0] = self.solution_path_wps_[0][0]
                 self.desired_position_[1] = self.solution_path_wps_[0][1]
                 inc_x = self.desired_position_[0] - self.current_position_[0]
@@ -164,7 +165,7 @@ class Controller(object):
                         self.desired_orientation_ - self.current_orientation_
                     )
 
-                    if abs(yaw_error) > 0.4:
+                    if abs(yaw_error) > 0.2:
                         rospy.logdebug(
                             "%s: orienting towards the next waypoint: %s",
                             rospy.get_name(),
