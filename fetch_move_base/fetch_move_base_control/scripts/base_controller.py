@@ -157,21 +157,25 @@ class Controller(object):
                 control_input.linear.y = 0.0
                 control_input.linear.z = 0.0
 
-                if distance_to_goal >= 0.3:
+                if distance_to_goal >= 0.4:
                     controller_state = 0
                     self.desired_orientation_ = wrapAngle(math.atan2(inc_y, inc_x))
                     yaw_error = wrapAngle(
                         self.desired_orientation_ - self.current_orientation_
                     )
 
-                    if abs(yaw_error) > 0.2:
+                    if abs(yaw_error) > 0.4:
                         rospy.logdebug(
-                            "%s: orienting towards the next waypoint", rospy.get_name()
+                            "%s: orienting towards the next waypoint: %s",
+                            rospy.get_name(),
+                            yaw_error,
                         )
                         control_input.angular.z = yaw_error * self.max_turn_rate_
                     else:
                         rospy.logdebug(
-                            "%s: moving towards the next waypoint", rospy.get_name()
+                            "%s: moving towards the next waypoint: %s",
+                            rospy.get_name(),
+                            yaw_error,
                         )
                         control_input.angular.z = yaw_error * self.max_turn_rate_
 
@@ -253,7 +257,8 @@ class Controller(object):
                             )
 
                             if abs(yaw_error) < self.yaw_goal_tolerance_:
-                                del self.solution_path_wps_[0]
+                                if len(self.solution_path_wps_) > 0:
+                                    del self.solution_path_wps_[0]
                             else:
                                 control_input.angular.z = (
                                     yaw_error * self.max_turn_rate_
@@ -284,7 +289,7 @@ def wrapAngle(angle):
 
 
 if __name__ == "__main__":
-    rospy.init_node("fetch_move_base_control", log_level=rospy.INFO)
+    rospy.init_node("fetch_move_base_control", log_level=rospy.DEBUG)
     rospy.loginfo("%s: starting fetch_move_base controller", rospy.get_name())
 
     controller = Controller()
