@@ -27,8 +27,8 @@
     <!--additional parameters for pedsim and robot simulation-->
     <arg name="frame_id" default="world" />
     <arg name="robot_base_frame_id" default="base_footprint" />
-    <arg name="obstacle_offset_x" default="-19.2" />
-    <arg name="obstacle_offset_y" default="-19.2" />
+    <arg name="obstacle_offset_x" default="-19.4" />
+    <arg name="obstacle_offset_y" default="-19.4" />
     <arg name="world_frame" default="world" />
     <arg name="robot_frame" default="base_footprint" />
     <arg name="publish_tf" default="false" />
@@ -73,9 +73,21 @@
     </include>
 
     <!-- Visualizer -->
-    <include file="$(find pedsim_simulator)/launch/visualizer.launch">
+    <!-- <include file="$(find pedsim_simulator)/launch/visualizer.launch">
         <arg name="walls_scale" value="$(arg walls_scale)" />
-    </include>
+    </include> -->
+    <arg name="hz" default="25.0" />
+
+    <node name="pedsim_visualizer" type="pedsim_visualizer_node" pkg="pedsim_visualizer" output="screen">
+        <param name="hz" value="$(arg hz)" type="double" />
+        <param name="walls_marker_scale" value="$(arg walls_scale)" type="double" />
+        <remap from="/pedsim_simulator/simulated_agents" to="/pedsim_simulator/simulated_agents_overwritten" />
+    </node>
+
+    <!-- to overwrite agents into pedsim -->
+    <node pkg="sfm_diff_drive" type="social_agents_overwriter.py" name="social_agents_overwriter" />
+
+    <!-- <include file="$(find pepper_pipeline)/launch/sfm_drive.launch" /> -->
 
     <!-- this node spawn pedsim actors to gazebo once, then the plugin updates their pose -->
     <!-- <node pkg="pedsim_gazebo_plugin" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents" output="screen" /> -->

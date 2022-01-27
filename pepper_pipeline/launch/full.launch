@@ -118,7 +118,7 @@
 
         <!-- testing controllers -->
         <!-- to use mbf -->
-        <node pkg="pepper_pipeline" type="mbf_client" name="mbf_path_execute" />
+        <!-- <node pkg="pepper_pipeline" type="mbf_client" name="mbf_path_execute" /> -->
 
         <node pkg="pepper_pipeline" type="odom_publisher" name="odom_publisher" />
 
@@ -202,9 +202,9 @@
             <param name="recovery_alpha_fast" value="0.0" />
         </node> -->
 
-        <include file="$(find fetch_move_base_planning)/launch/pepper_move_base_planning.launch" />
+        <!-- <include file="$(find fetch_move_base_planning)/launch/pepper_move_base_planning.launch" /> -->
         <!-- <include file="$(find fetch_move_base_mapping)/launch/pepper_move_base_mapping.launch" /> -->
-        <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" />
+        <!-- <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" /> -->
 
         <!-- Not using Cartographer because of an odom shifting problem -->
         <!-- cartographer_node -->
@@ -323,6 +323,5 @@
 
     <!-- RVIZ GUI -->
     <node respawn="$(arg respawn)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(arg bringup_package_path)/rviz/$(arg config).rviz" output="$(arg output)" />
-
 
 </launch>
