@@ -56,7 +56,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
 
         fetch_collision_solid_.reset(new fcl::Cylinder(fetch_base_radius_, fetch_base_height_));
 
-        agent_collision_solid_.reset(new fcl::Cylinder(0.5, fetch_base_height_));
+        agent_collision_solid_.reset(new fcl::Cylinder(0.35, fetch_base_height_));
 
         octree_res_ = octree_->getResolution();
         octree_->getMetricMin(octree_min_x_, octree_min_y_, octree_min_z_);
@@ -134,9 +134,9 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 1)
+    if (actualFOVDistance < 4)
     {
-        actualFOVDistance = 1;
+        actualFOVDistance = 4;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
@@ -149,7 +149,8 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                       std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
 
-        if (dRobotAgent < actualFOVDistance)
+        if ((dRobotAgent < actualFOVDistance) |
+            ((agentState.twist.linear.x < 0.05) & (agentState.twist.linear.y < 0.05)))
         {
             // FCL
             // TODO: cambiar el collision object con el de un agente
@@ -496,9 +497,9 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 2)
+    if (actualFOVDistance < 4)
     {
-        actualFOVDistance = 2;
+        actualFOVDistance = 4;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);

@@ -15,13 +15,13 @@ optimization_objective: SocialComfort #PathLength, RiskZones, SocialComfort, Ext
 motion_cost_interpolation: False
 start_prev_path_proj: False
 xy_goal_tolerance: 0.25
-visualize_tree: False
+visualize_tree: True
 
 # Collision checking
 octomap_service: /octomap_binary
 global_map_topic: /map
 fetch_base_height: 1.22
-fetch_base_radius: 0.35
+fetch_base_radius: 0.3
 
 odometry_topic: /pepper/odom_groundtruth
 query_goal_topic: /fetch_move_base_planner/query_goal
@@ -31,7 +31,7 @@ goto_action: /pepper_goto_action
 goto_region_action: /pepper_goto_region_action
 
 # Social agents data topics
-sim_agents_topic: /pedsim_simulator/simulated_agents
+sim_agents_topic: /pedsim_simulator/simulated_agents_overwritten
 
 # extra frame option
 main_frame: world
