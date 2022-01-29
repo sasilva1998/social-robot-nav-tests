@@ -153,7 +153,6 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             ((agentState.twist.linear.x < 0.05) & (agentState.twist.linear.y < 0.05)))
         {
             // FCL
-            // TODO: cambiar el collision object con el de un agente
             fcl::Transform3f agent_tf;
             agent_tf.setIdentity();
             agent_tf.setTranslation(

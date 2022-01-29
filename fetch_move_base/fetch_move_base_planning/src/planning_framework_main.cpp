@@ -60,6 +60,10 @@
 #include <fetch_move_base_msgs/Goto2DAction.h>
 #include <fetch_move_base_msgs/GotoRegion2DAction.h>
 
+// pedsim msgs
+#include <pedsim_msgs/AgentStates.h>
+#include <pedsim_msgs/AgentState.h>
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
@@ -129,7 +133,7 @@ private:
         goal_odom_frame_;
     double goal_radius_;
     std::string planner_name_, optimization_objective_, odometry_topic_, query_goal_topic_,
-        solution_path_topic_, world_frame_, octomap_service_, control_active_topic_;
+        solution_path_topic_, world_frame_, octomap_service_, control_active_topic_, sim_agents_topic;
     std::vector<const ob::State *> solution_path_states_;
 };
 
@@ -177,6 +181,7 @@ OnlinePlannFramework::OnlinePlannFramework()
     local_nh_.param("xy_goal_tolerance", xy_goal_tolerance_, 0.2);
     local_nh_.param("yaw_goal_tolerance", yaw_goal_tolerance_, 0.1);
     local_nh_.param("visualize_tree", visualize_tree_, false);
+    local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
 
     goal_radius_ = xy_goal_tolerance_;
     goal_available_ = false;
@@ -885,11 +890,159 @@ void OnlinePlannFramework::planningTimerCallback()
             simple_setup_->clear();
         }
         else
+        {
             ROS_INFO("%s:\n\tpath has not been found\n", ros::this_node::getName().c_str());
 
-        // ros::spinOnce();
-        //        if (mapping_offline_)
-        //            goal_available_ = false;
+            if (solution_path_states_.size() > 0)
+            {
+                ROS_INFO("%s:\n\tsending partial last possible path\n", ros::this_node::getName().c_str());
+                fetch_move_base_msgs::Path2D solution_path_for_control;
+
+                // pedsim_msgs::AgentStatesConstPtr agentStates =
+                // ros::topic::waitForMessage<pedsim_msgs::AgentStates>(sim_agents_topic);
+
+                if (simple_setup_->getStateValidityChecker()->isValid(solution_path_states_[0]))
+                {
+                    geometry_msgs::Pose2D p;
+                    p.x = solution_path_states_[0]->as<ob::RealVectorStateSpace::StateType>()->values[0];
+                    p.y = solution_path_states_[0]->as<ob::RealVectorStateSpace::StateType>()->values[1];
+
+                    if (0 == (solution_path_states_.size() - 1))
+                    {
+                        if (goal_available_)
+                        {
+                            ros::Time t;
+                            std::string err = "";
+                            tf::StampedTransform tf_map_to_fixed;
+                            tf_listener_.getLatestCommonTime("map", "odom", t, &err);
+                            tf_listener_.lookupTransform("map", "odom", t, tf_map_to_fixed);
+
+                            tf_map_to_fixed.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+
+                            p.theta = goal_map_frame_[2] - yaw;
+                        }
+                        else if (goal_region_available_)
+                        {
+                            goal_odom_frame_[2] = atan2(goal_odom_frame_[1] - p.y, goal_odom_frame_[0] - p.x);
+                            p.theta = goal_odom_frame_[2];
+                        }
+                    }
+                    solution_path_for_control.waypoints.push_back(p);
+                }
+
+                bool lastNode = false;
+
+                for (unsigned int i = 0; (i < solution_path_states_.size() - 1) || (!lastNode); i++)
+                {
+                    if (simple_setup_->getSpaceInformation()->checkMotion(solution_path_states_[i],
+                                                                          solution_path_states_[i + 1]))
+                    {
+                        geometry_msgs::Pose2D p;
+                        p.x = solution_path_states_[i + 1]
+                                  ->as<ob::RealVectorStateSpace::StateType>()
+                                  ->values[0];
+                        p.y = solution_path_states_[i + 1]
+                                  ->as<ob::RealVectorStateSpace::StateType>()
+                                  ->values[1];
+
+                        if (i == (solution_path_states_.size() - 1))
+                        {
+                            if (goal_available_)
+                            {
+                                ros::Time t;
+                                std::string err = "";
+                                tf::StampedTransform tf_map_to_fixed;
+                                tf_listener_.getLatestCommonTime("map", "odom", t, &err);
+                                tf_listener_.lookupTransform("map", "odom", t, tf_map_to_fixed);
+
+                                tf_map_to_fixed.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+
+                                p.theta = goal_map_frame_[2] - yaw;
+                            }
+                            else if (goal_region_available_)
+                            {
+                                goal_odom_frame_[2] =
+                                    atan2(goal_odom_frame_[1] - p.y, goal_odom_frame_[0] - p.x);
+                                p.theta = goal_odom_frame_[2];
+                            }
+                        }
+                        solution_path_for_control.waypoints.push_back(p);
+                    }
+                    else
+                    {
+                        double angle = atan2(solution_path_states_[i + 1]
+                                                     ->as<ob::RealVectorStateSpace::StateType>()
+                                                     ->values[1] -
+                                                 solution_path_states_[i]
+                                                     ->as<ob::RealVectorStateSpace::StateType>()
+                                                     ->values[1],
+                                             solution_path_states_[i + 1]
+                                                     ->as<ob::RealVectorStateSpace::StateType>()
+                                                     ->values[0] -
+                                                 solution_path_states_[i]
+                                                     ->as<ob::RealVectorStateSpace::StateType>()
+                                                     ->values[0]);
+                        int counter = 1;
+                        while (!lastNode)
+                        {
+                            ob::ScopedState<> posEv(simple_setup_->getStateSpace());
+                            posEv[0] = double(solution_path_states_[i]
+                                                  ->as<ob::RealVectorStateSpace::StateType>()
+                                                  ->values[0] +
+                                              counter * 0.1 * std::cos(angle));  // x
+                            posEv[1] = double(solution_path_states_[i]
+                                                  ->as<ob::RealVectorStateSpace::StateType>()
+                                                  ->values[1] +
+                                              counter * 0.1 * std::sin(angle));  // y
+
+                            if (!simple_setup_->getSpaceInformation()->checkMotion(solution_path_states_[i],
+                                                                                   posEv->as<ob::State>()))
+                            {
+                                ob::ScopedState<> posEv(simple_setup_->getStateSpace());
+                                posEv[0] = double(solution_path_states_[i]
+                                                      ->as<ob::RealVectorStateSpace::StateType>()
+                                                      ->values[0] +
+                                                  (counter - 1) * 0.1 * std::cos(angle));  // x
+                                posEv[1] = double(solution_path_states_[i]
+                                                      ->as<ob::RealVectorStateSpace::StateType>()
+                                                      ->values[1] +
+                                                  (counter - 1) * 0.1 * std::sin(angle));
+
+                                geometry_msgs::Pose2D p;
+                                p.x = posEv[0];
+                                p.y = posEv[1];
+
+                                if (goal_available_)
+                                {
+                                    ros::Time t;
+                                    std::string err = "";
+                                    tf::StampedTransform tf_map_to_fixed;
+                                    tf_listener_.getLatestCommonTime("map", "odom", t, &err);
+                                    tf_listener_.lookupTransform("map", "odom", t, tf_map_to_fixed);
+
+                                    tf_map_to_fixed.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+
+                                    p.theta = goal_map_frame_[2] - yaw;
+                                }
+                                else if (goal_region_available_)
+                                {
+                                    goal_odom_frame_[2] =
+                                        atan2(goal_odom_frame_[1] - p.y, goal_odom_frame_[0] - p.x);
+                                    p.theta = goal_odom_frame_[2];
+                                }
+                                lastNode = true;
+                                solution_path_for_control.waypoints.push_back(p);
+                            }
+                            counter += 1;
+                        }
+                    }
+                }
+                // solution_path_control_pub_.publish(solution_path_for_control);
+                // ros::spinOnce();
+                //        if (mapping_offline_)
+                //            goal_available_ = false;
+            }
+        }
     }
 }
 
