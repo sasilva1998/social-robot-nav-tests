@@ -32,7 +32,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: LaserScan
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -1119,15 +1119,15 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 15.730326652526855
+      Distance: 17.58830451965332
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.4128986597061157
-        Y: -8.468634605407715
+        X: -1.9865341186523438
+        Y: -6.566489219665527
         Z: -7.448275027854834e-6
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
