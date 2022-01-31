@@ -8,6 +8,7 @@
 
     <node pkg="sfm_diff_drive" type="sii_metrics.py" name="sii_metric_publisher" />
 
+    <include file="$(find cpu_monitor)/launch/cpu_monitor.launch" />
 
     <!-- all the following nodes need to be scripted -->
     <node pkg="pepper_pipeline" type="metrics_recorder.py" name="metrics_recorder" />
