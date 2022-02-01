@@ -53,6 +53,8 @@ class MetricsRecorder:
             # print(_e)
 
         print("csv imported")
+        print(self.csv_dir + self.solution_type + "/" + self.csv_name)
+        print(last_data)
 
         with open(
             self.csv_dir + self.solution_type + "/" + self.csv_name, "a", newline=""
@@ -93,10 +95,10 @@ class MetricsRecorder:
                         "test_number": int(last_data[1]) + 1,
                         "time": dt_string,
                         "goal_reached": self.goal_reached,
-                        "average_sii": np.average(self.sii),
-                        "average_rmi": np.average(self.rmi),
+                        "average_sii": round(np.average(self.sii), 2),
+                        "average_rmi": round(np.average(self.rmi), 2),
                         "total_time": self.total_time,
-                        "average_cpu": np.average(self.cpu),
+                        "average_cpu": round(np.average(self.cpu), 2),
                     }
                 )
             else:
@@ -105,10 +107,10 @@ class MetricsRecorder:
                         "test_number": 1,
                         "time": dt_string,
                         "goal_reached": self.goal_reached,
-                        "average_sii": np.average(self.sii),
-                        "average_rmi": np.average(self.rmi),
+                        "average_sii": round(np.average(self.sii), 2),
+                        "average_rmi": round(np.average(self.rmi), 2),
                         "total_time": self.total_time,
-                        "average_cpu": np.average(self.cpu),
+                        "average_cpu": round(np.average(self.cpu), 2),
                     }
                 )
             print("[INFO] [" + str(rospy.get_time()) + "] metrics for test saved.")
@@ -138,16 +140,11 @@ class MetricsRecorder:
         self.cpu = np.array([], dtype=np.float64)
 
         # ! directory of csv files
-        self.csv_dir = rospy.get_param(
-            "/frozen_agent_csv/csv_dir",
-            "/home/sasm/people_sim_ws/src/pedsim_ros/pedsim_simulator/metrics/",
-        )
+        self.csv_dir = rospy.get_param("~csv_dir")
 
-        self.solution_type = rospy.get_param(
-            "/frozen_agent_csv/solution_type", "position/"
-        )
+        self.solution_type = rospy.get_param("~solution_type")
 
-        self.csv_name = rospy.get_param("/frozen_agent_csv/csv_name", "first_test.csv")
+        self.csv_name = rospy.get_param("~csv_name")
 
         #! subcribers
 
