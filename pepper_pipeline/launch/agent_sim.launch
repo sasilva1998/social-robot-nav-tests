@@ -27,7 +27,7 @@
     <!--additional parameters for pedsim and robot simulation-->
     <arg name="frame_id" default="world" />
     <arg name="robot_base_frame_id" default="base_footprint" />
-    <arg name="obstacle_offset_x" default="-19.4" />
+    <arg name="obstacle_offset_x" default="-19.45" />
     <arg name="obstacle_offset_y" default="-19.4" />
     <arg name="world_frame" default="world" />
     <arg name="robot_frame" default="base_footprint" />

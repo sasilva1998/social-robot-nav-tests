@@ -22,8 +22,8 @@
     <arg name="use_sim_time" default="true" />
     <arg name="gui" default="false" />
 
-    <arg name="x_pos" default="0" />
-    <arg name="y_pos" default="0" />
+    <arg name="x_pos" default="1.51" />
+    <arg name="y_pos" default="-1.51" />
 
     <!-- COB world spawn -->
     <env name="GAZEBO_MODEL_PATH" value="$(arg pkg_gazebo_worlds)/Media/models:$(optenv GAZEBO_MODEL_PATH)" />
@@ -320,8 +320,12 @@
     <arg name="config" default="default" />
     <arg name="output" default="screen" />
     <arg name="respawn" default="false" />
+    <arg name="rviz_gui" default="false" />
 
     <!-- RVIZ GUI -->
-    <node respawn="$(arg respawn)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(arg bringup_package_path)/rviz/$(arg config).rviz" output="$(arg output)" />
+
+    <group if="$(arg rviz_gui)">
+        <node respawn="$(arg respawn)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(arg bringup_package_path)/rviz/$(arg config).rviz" output="$(arg output)" />
+    </group>
 
 </launch>
