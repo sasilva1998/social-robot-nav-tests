@@ -1,6 +1,8 @@
 import time
 import roslaunch
 import rospy
+from sfm_diff_drive.msg import SFMDriveActionResult
+
 
 PROCESS_GENERATE_RUNNING = True
 
@@ -28,14 +30,33 @@ def init_launch(launchfile, process_listener):
     return launch
 
 
-rospy.init_node("async_cnn_generator")
-LAUNCH_FILE = "/home/sasm/people_sim_ws/src/pedsim_ros/pedsim_simulator/launch/cob_pedsim_pedestrians_rviz_metrics_test.launch"
+rospy.init_node("sfm_tests_launcher")
+
+LAUNCH_FILE = (
+    "/home/sasm/ros/melodic/system/src/pepper_pipeline/launch/sfm_tests.launch"
+)
 launch = init_launch(LAUNCH_FILE, ProcessListener())
 launch.start()
 
+goal_reached = False
+
+
+def goal_reached_callback(msg):
+    global goal_reached
+    if msg.result.result == "waypoint reached":
+        goal_reached = True
+
+
+rospy.Subscriber(
+    "/sfm_drive_node/result",
+    SFMDriveActionResult,
+    goal_reached_callback,
+    queue_size=1,
+)
+
 init_time = time.time()
 
-while time.time() - init_time < 30:
+while (time.time() - init_time < 840) and (not goal_reached):
     rospy.sleep(0.05)
 
 launch.shutdown()
