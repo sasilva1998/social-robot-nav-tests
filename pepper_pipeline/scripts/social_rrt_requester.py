@@ -5,7 +5,7 @@ import actionlib
 import time
 
 # from sfm_diff_drive.msg import SFMDriveAction, SFMDriveGoal
-from fetch_move_base_msgs.msg import Goto2DAction, Goto2DActionGoal
+from fetch_move_base_msgs.msg import Goto2DAction, Goto2DGoal
 
 
 def social_rrt_client():
@@ -18,10 +18,10 @@ def social_rrt_client():
     client.wait_for_server()
 
     # Creates a goal to send to the action server.
-    goal = Goto2DActionGoal()
+    goal = Goto2DGoal()
 
-    goal.goal.x = -12.0
-    goal.goal.y = 12.5
+    goal.goal.x = 3
+    goal.goal.y = -3
 
     # Sends the goal to the action server.
     client.send_goal(goal)

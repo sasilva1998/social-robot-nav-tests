@@ -56,7 +56,7 @@ rospy.Subscriber(
 
 init_time = time.time()
 
-while (time.time() - init_time < 840) and (not goal_reached):
+while (time.time() - init_time < 800) and (not goal_reached):
     rospy.sleep(0.05)
 
 launch.shutdown()

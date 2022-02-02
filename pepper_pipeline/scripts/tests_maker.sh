@@ -4,6 +4,6 @@ do
     echo "========================================================\n"
     echo "This is the $i th run\n"
     echo "========================================================\n"
-    python /home/sasm/ros/melodic/system/src/pepper_pipeline/scripts/tests_launcher.py
+    python /home/sasm/ros/melodic/system/src/pepper_pipeline/scripts/sfm_tests_launcher.py
     killall -9 gzserver gzclient
 done
