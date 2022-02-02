@@ -13,7 +13,9 @@
 
     <include file="$(find cpu_monitor)/launch/cpu_monitor.launch" />
 
-    <node pkg="pepper_pipeline" type="sfm_requester.py" name="sfm_requester" output="screen" />
+    <node pkg="pepper_pipeline" type="sfm_requester.py" name="sfm_requester" />
+
+    <node pkg="pepper_pipelin" type="collision_counter" name="collision_counter" />
 
     <!-- params for agent csv writing -->
     <arg name="csv_dir" default="/home/sasm/ros/melodic/system/src/pepper_pipeline/results/" />

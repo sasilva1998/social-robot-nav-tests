@@ -3,7 +3,7 @@
     <node pkg="sfm_diff_drive" type="sfm_drive_server_pepper.py" name="sfm_drive_node">
         <param name="force_desired" value="10" />
         <param name="force_obstacle" value="10" />
-        <param name="force_social" value="110" />
+        <param name="force_social" value="50" />
         <param name="cmd_vel_topic" value="/pepper/cmd_vel" />
         <param name="max_vel" value="0.6" />
         <param name="max_vel_turn" value="0.5" />
