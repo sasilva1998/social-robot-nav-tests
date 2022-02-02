@@ -4,7 +4,7 @@ import csv
 from datetime import datetime
 
 import rospy
-from std_msgs.msg import Float64, Float32
+from std_msgs.msg import Float64, Float32, Int32
 import numpy as np
 import time
 from sfm_diff_drive.msg import SFMDriveActionResult, SFMDriveActionFeedback
@@ -27,6 +27,7 @@ def import_csv(csvfilename):
                     row[3],
                     row[4],
                     row[5],
+                    row[6],
                 ]
                 data.append(columns)
         scraped.close()
@@ -71,6 +72,7 @@ class MetricsRecorder:
                 "average_rmi",
                 "total_time",
                 "average_cpu",
+                "collision_counter",
             ]
             writer = csv.DictWriter(csvfile_write, fieldnames=fieldnames)
             try:
@@ -82,6 +84,7 @@ class MetricsRecorder:
                     "average_rmi",
                     "total_time",
                     "average_cpu",
+                    "collision_counter",
                 ]:
                     writer.writeheader()
             except:
@@ -99,6 +102,7 @@ class MetricsRecorder:
                         "average_rmi": round(np.average(self.rmi), 2),
                         "total_time": self.total_time,
                         "average_cpu": round(np.average(self.cpu), 2),
+                        "collision_counter": self.collision_counter,
                     }
                 )
             else:
@@ -111,6 +115,7 @@ class MetricsRecorder:
                         "average_rmi": round(np.average(self.rmi), 2),
                         "total_time": self.total_time,
                         "average_cpu": round(np.average(self.cpu), 2),
+                        "collision_counter": self.collision_counter,
                     }
                 )
             print("[INFO] [" + str(rospy.get_time()) + "] metrics for test saved.")
@@ -138,6 +143,8 @@ class MetricsRecorder:
         self.total_time = 0.0
 
         self.cpu = np.array([], dtype=np.float64)
+
+        self.collision_counter = 0
 
         # ! directory of csv files
         self.csv_dir = rospy.get_param("~csv_dir")
@@ -183,6 +190,13 @@ class MetricsRecorder:
             queue_size=1,
         )
 
+        rospy.Subscriber(
+            "/collision_counter",
+            Int32,
+            self.collision_counter_callback,
+            queue_size=1,
+        )
+
     # rmi metrics record
     def rmi_callback(self, msg):
         if self.goal_available:
@@ -208,6 +222,9 @@ class MetricsRecorder:
     def cpu_callback(self, msg):
         if self.goal_available:
             self.cpu = np.append(self.cpu, msg.data)
+
+    def collision_counter_callback(self, msg):
+        self.collision_counter = msg.data
 
 
 if __name__ == "__main__":
