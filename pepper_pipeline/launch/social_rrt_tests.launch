@@ -22,7 +22,7 @@
     <arg name="solution_type" default="social_rrt" />
     <arg name="csv_name" default="01_02_case1.csv" />
 
-    <node pkg="pepper_pipeline" type="metrics_recorder.py" name="metrics_recorder" output="screen">
+    <node pkg="pepper_pipeline" type="social_rrt_metrics_recorder.py" name="metrics_recorder" output="screen">
         <param name="csv_dir" value="$(arg csv_dir)" type="string" />
         <param name="solution_type" value="$(arg solution_type)" type="string" />
         <param name="csv_name" value="$(arg csv_name)" type="string" />
