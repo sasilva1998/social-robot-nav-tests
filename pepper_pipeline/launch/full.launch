@@ -44,7 +44,6 @@
         <arg name="paused" value="$(arg paused)" />
         <arg name="use_sim_time" value="$(arg use_sim_time)" />
         <arg name="gui" value="$(arg gui)" />
-        <remap from="tf" to="gazebo_tf" />
     </include>
 
     <!-- Spawn a robot into Gazebo -->
