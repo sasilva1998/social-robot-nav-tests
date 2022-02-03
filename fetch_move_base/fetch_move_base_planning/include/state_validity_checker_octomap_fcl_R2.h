@@ -254,7 +254,7 @@ private:
     /*
      * This is the velocity that will create de maximum distance for agent evaluation
      */
-    double robotVelocityThreshold = 0.55;
+    double robotVelocityThreshold = 0.35;
 };
 
 #endif
