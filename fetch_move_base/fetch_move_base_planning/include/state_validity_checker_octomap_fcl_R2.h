@@ -164,6 +164,9 @@ private:
     double fetch_base_radius_, fetch_base_height_;
     std::string octomap_service_;
 
+    // cost objective type
+    std::string optimization_objective;
+
     // topics
     std::string sim_agents_topic;
     std::string odometry_topic;

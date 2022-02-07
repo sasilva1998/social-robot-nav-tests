@@ -32,6 +32,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
     local_nh_.param("odometry_topic", odometry_topic, odometry_topic);
     local_nh_.param("main_frame", main_frame, main_frame);
+    local_nh_.param("optimization_objective", optimization_objective, optimization_objective);
 
     octree_ = NULL;
 
@@ -145,11 +146,32 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
     {
         pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
 
-        double dRobotAgent =
-            std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
-                      std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+        if (optimization_objective == "SocialComfort")
+        {
+            double dRobotAgent =
+                std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
+                          std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+            if (dRobotAgent < actualFOVDistance)
+            {
+                // FCL
+                fcl::Transform3f agent_tf;
+                agent_tf.setIdentity();
+                agent_tf.setTranslation(fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y,
+                                                   fetch_base_height_ / 2.0));
+                fcl::Quaternion3f qt0;
+                qt0.fromEuler(0.0, 0.0, 0.0);
+                agent_tf.setQuatRotation(qt0);
 
-        if (dRobotAgent < actualFOVDistance)
+                fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
+                fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
+
+                if (collision_result.isCollision())
+                {
+                    return false;
+                }
+            }
+        }
+        else
         {
             // FCL
             fcl::Transform3f agent_tf;
