@@ -57,6 +57,8 @@ int main(int argc, char **argv)
 
     fcl::CollisionResult collision_result;
 
+    std:bool foundCollision = false;
+
     while (ros::ok())
     {
         ros::service::call("/octomap_binary", req, resp);
@@ -89,7 +91,7 @@ int main(int argc, char **argv)
                 collisionCounter++;
                 inCollision = true;
             }
-            else if (!collision_result_octomap.isCollision())
+            else if (!collision_result_octomap.isCollision() & !foundCollision)
             {
                 inCollision = false;
             }
@@ -97,48 +99,67 @@ int main(int argc, char **argv)
 
         if (!abs_octree_ || !collision_result_octomap.isCollision())
         {
+
+            foundCollision = false;
+
             for (int i = 0; i < agentStates->agent_states.size(); i++)
             {
-                fcl::Transform3f fetch_tf;
-                fetch_tf.setIdentity();
-                fetch_tf.setTranslation(fcl::Vec3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, fetch_base_height_ / 2.0));
-                fcl::Quaternion3f qt0;
-                qt0.fromEuler(0.0, 0.0, 0.0);
-                fetch_tf.setQuatRotation(qt0);
 
-                fcl::CollisionObject vehicle_co(fetch_collision_solid_, fetch_tf);
-
-                pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
-
-                double dRobotAgent =
-                    std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
-                              std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
-
-                if (dRobotAgent < 2)
+                if (!foundCollision)
                 {
-                    // FCL
-                    fcl::Transform3f agent_tf;
-                    agent_tf.setIdentity();
-                    agent_tf.setTranslation(
-                        fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
+                    fcl::Transform3f fetch_tf;
+                    fetch_tf.setIdentity();
+                    fetch_tf.setTranslation(fcl::Vec3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, fetch_base_height_ / 2.0));
                     fcl::Quaternion3f qt0;
                     qt0.fromEuler(0.0, 0.0, 0.0);
-                    agent_tf.setQuatRotation(qt0);
+                    fetch_tf.setQuatRotation(qt0);
 
-                    fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
-                    fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
+                    fcl::CollisionObject vehicle_co(fetch_collision_solid_, fetch_tf);
 
-                    if (collision_result_octomap.isCollision() & !inCollision)
+                    pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
+
+                    double dRobotAgent =
+                        std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
+                                std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+
+                    if (dRobotAgent < 2)
                     {
-                        collisionCounter++;
-                        inCollision = true;
+                        // FCL
+                        fcl::Transform3f agent_tf;
+                        agent_tf.setIdentity();
+                        agent_tf.setTranslation(
+                            fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
+                        fcl::Quaternion3f qt0;
+                        qt0.fromEuler(0.0, 0.0, 0.0);
+                        agent_tf.setQuatRotation(qt0);
+
+                        fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
+                        fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
+
+                        if (collision_result.isCollision())
+                        {
+                            // collisionCounter++;
+                            // inCollision = true;
+                            foundCollision = true;
+                        }
+                        // else if (!collision_result.isCollision())
+                        // {
+                        //     inCollision = false;
+                        // }
                     }
-                    else if (!collision_result_octomap.isCollision())
-                    {
-                        inCollision = false;
-                    }
-                }
+                }         
             }
+
+            if (foundCollision & !inCollision)
+            {
+                collisionCounter++;
+                inCollision = true;
+            }
+            else if (!foundCollision)
+            {
+                inCollision = false;
+            }
+            
         }
 
         std_msgs::Int32 collisionCounterMsg;
