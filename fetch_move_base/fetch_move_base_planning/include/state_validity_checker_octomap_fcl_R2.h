@@ -151,6 +151,9 @@ public:
     bool isAgentInRFOV(const ob::State *state, const pedsim_msgs::AgentState agentState,
                        const ob::SpaceInformationPtr space) const;
 
+    bool isRobotInFront(const ob::State *state, const pedsim_msgs::AgentState agentState,
+                       const ob::SpaceInformationPtr space) const;
+
 private:
     // ROS
     ros::NodeHandle nh_, local_nh_;
@@ -230,6 +233,11 @@ private:
      */
     double fFieldOfView = 0.0;
 
+    //! agents parameters
+    /*
+     * agent fov angle
+     */
+
     // /*
     //  * Angle defined when velocity is involved between robot and agent
     //  */
@@ -244,7 +252,6 @@ private:
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotAngleView = 1 / 2 * M_PI;
 
     // double fRobotView = (M_PI - ((M_PI - robotAngleView) * 2));
     double fRobotView = 0.5 * M_PI;

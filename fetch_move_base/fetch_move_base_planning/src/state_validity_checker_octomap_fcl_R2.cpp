@@ -458,16 +458,26 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
     }
 
     bool robotInFront = false;
+    bool robotInFOV = false;
     double modSigmaY;
     double agentVelocity;
 
     agentVelocity =
         std::sqrt(std::pow(agentState.twist.linear.x, 2) + std::pow(agentState.twist.linear.y, 2));
 
+    robotInFront = this->isRobotInFront(state, agentState, space);
+
     if (robotInFront)
-        modSigmaY = (1 + agentVelocity * fv + fFront + fFieldOfView) * sigmaY;
+    {
+        if (robotInFOV)
+            modSigmaY = (1 + agentVelocity * fv + fFront + fFieldOfView) * sigmaY;
+        else
+            modSigmaY = (1 + agentVelocity * fv + fFront) * sigmaY;
+    }
     else
-        modSigmaY = (1 + agentVelocity * fv + fFront) * sigmaY;
+    {
+        modSigmaY = sigmaY;
+    }
 
     double basicPersonalSpaceVal =
         Ap *
@@ -478,6 +488,46 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
                      2)));
 
     return basicPersonalSpaceVal;
+}
+
+bool OmFclStateValidityCheckerR2::isRobotInFront(const ob::State *state,
+                                                const pedsim_msgs::AgentState agentState,
+                                                const ob::SpaceInformationPtr space) const
+
+{
+    double tethaAgentRobot = atan2((odomData->pose.pose.position.y - agentState.pose.position.y),
+                                   (odomData->pose.pose.position.x - agentState.pose.position.x));
+
+    if (tethaAgentRobot < 0)
+    {
+        tethaAgentRobot = 2 * M_PI + tethaAgentRobot;
+    }
+
+    tf::Quaternion q(agentState.pose.orientation.x, agentState.pose.orientation.y,
+                     agentState.pose.orientation.z, agentState.pose.orientation.w);
+
+    tf::Matrix3x3 m(q);
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+
+    double agentAngle = yaw;
+
+    if (agentAngle < 0)
+    {
+        agentAngle = 2 * M_PI + agentAngle;
+    }
+
+    if (tethaAgentRobot > (agentAngle + M_PI))
+        tethaAgentRobot = abs(agentAngle + 2 * M_PI - tethaAgentRobot);
+    else if (agentAngle > (tethaAgentRobot + M_PI))
+        tethaAgentRobot = abs(tethaAgentRobot + 2 * M_PI - agentAngle);
+    else
+        tethaAgentRobot = abs(tethaAgentRobot - agentAngle);
+
+    if (abs(tethaAgentRobot) < 0.5 * M_PI)
+        return true;
+
+    return false;
 }
 
 bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
