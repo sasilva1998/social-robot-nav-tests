@@ -20,7 +20,7 @@
     <arg name="headless" default="false" />
     <arg name="paused" default="false" />
     <arg name="use_sim_time" default="true" />
-    <arg name="gui" default="false" />
+    <arg name="gui" default="true" />
 
     <arg name="x_pos" default="1.51" />
     <arg name="y_pos" default="-1.51" />
@@ -37,7 +37,7 @@
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
 
-    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <include file="$(find pepper_pipeline)/launch/empty_world.launch">
         <arg name="world_name" value="$(arg world_name)" />
         <arg name="debug" value="$(arg debug)" />
         <arg name="headless" value="$(arg headless)" />
@@ -319,7 +319,7 @@
     <arg name="config" default="default" />
     <arg name="output" default="screen" />
     <arg name="respawn" default="false" />
-    <arg name="rviz_gui" default="false" />
+    <arg name="rviz_gui" default="true" />
 
     <!-- RVIZ GUI -->
 
