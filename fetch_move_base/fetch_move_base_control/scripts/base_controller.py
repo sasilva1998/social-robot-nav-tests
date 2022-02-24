@@ -49,6 +49,11 @@ class Controller(object):
         self.solution_path_wps_ = []
 
         # =======================================================================
+        # Path trimmer variables
+        # =======================================================================
+        self.yaw = 0
+
+        # =======================================================================
         # TF listener
         # =======================================================================
         self.tf_listener_ = tf.TransformListener()
@@ -110,7 +115,7 @@ class Controller(object):
         """
         self.current_position_[0] = odometry_msg.pose.pose.position.x
         self.current_position_[1] = odometry_msg.pose.pose.position.y
-        (r, p, y) = tf.transformations.euler_from_quaternion(
+        (r, p, self.yaw) = tf.transformations.euler_from_quaternion(
             [
                 odometry_msg.pose.pose.orientation.x,
                 odometry_msg.pose.pose.orientation.y,
@@ -118,23 +123,84 @@ class Controller(object):
                 odometry_msg.pose.pose.orientation.w,
             ]
         )
-        self.current_orientation_ = wrapAngle(y)
+        self.current_orientation_ = wrapAngle(self.yaw)
         return
 
     def receiveControlPathCallback(self, path_2d_msg):
         """Callback to receive path (list of waypoints)"""
         self.solution_path_wps_ = []
-        for i in range(1, len(path_2d_msg.waypoints)):
-            waypoint = path_2d_msg.waypoints[i]
+
+        waypoint_distances = np.array([])
+        min_list_index = []
+        actual_next_waypoint_index = None
+
+        waypoints_list = path_2d_msg.waypoints
+        # print(waypoints_list)
+        for waypoint in waypoints_list:
+            waypoint_distances = np.append(
+                waypoint_distances,
+                [
+                    euclidian_distance(
+                        self.current_position_[0],
+                        self.current_position_[1],
+                        waypoint.x,
+                        waypoint.y,
+                    )
+                ],
+            )
+        # print(len(waypoint_distances))
+        for i in range(0, 3):
+            min_list_index.append(
+                numpy.where(waypoint_distances == numpy.amin(waypoint_distances))[0][0]
+            )
+            waypoint_distances[min_list_index[i]] = float("inf")
+        print(min_list_index)
+        current_waypoint_angle = float("inf")
+        for i in min_list_index:
+            new_waypoint_angle = self.fetchAngleToPoint(
+                path_2d_msg.waypoints[i].x, path_2d_msg.waypoints[i].y
+            )
+            if new_waypoint_angle < current_waypoint_angle:
+                actual_next_waypoint_index = i
+                current_waypoint_angle = new_waypoint_angle
+
+        if actual_next_waypoint_index is not None:
+            waypoints_list = waypoints_list[actual_next_waypoint_index+1:]
+
+        for i in range(1, len(waypoints_list)):
+            waypoint = waypoints_list[i]
             distance_to_wp = math.sqrt(
                 math.pow(waypoint.x - self.current_position_[0], 2.0)
                 + math.pow(waypoint.y - self.current_position_[1], 2.0)
             )
             if distance_to_wp > self.xy_goal_tolerance_ or i == (
-                len(path_2d_msg.waypoints) - 1
+                len(waypoints_list) - 1
             ):
                 self.solution_path_wps_.append([waypoint.x, waypoint.y, waypoint.theta])
         return
+
+    def fetchAngleToPoint(self, x, y):
+
+        tetha_robot_waypoint = np.arctan2(
+            y - self.current_position_[1], x - self.current_position_[0]
+        )
+
+        if tetha_robot_waypoint < 0:
+            tetha_robot_waypoint = 2 * math.pi + tetha_robot_waypoint
+
+        robotAngle = self.yaw
+
+        if robotAngle < 0:
+            robotAngle = 2 * math.pi + robotAngle
+
+        if tetha_robot_waypoint > (robotAngle + math.pi):
+            tetha_robot_waypoint = abs(robotAngle + 2 * math.pi - tetha_robot_waypoint)
+        elif robotAngle > (tetha_robot_waypoint + math.pi):
+            tetha_robot_waypoint = abs(tetha_robot_waypoint + 2 * math.pi - robotAngle)
+        else:
+            tetha_robot_waypoint = abs(tetha_robot_waypoint - robotAngle)
+
+        return tetha_robot_waypoint
 
     def controlBaseFetch(self):
         """Control loop"""
@@ -283,6 +349,10 @@ class Controller(object):
         return
 
 
+def euclidian_distance(x1, y1, x2, y2):
+    return np.sqrt(np.power(x2 - x1, 2) + np.power(y2 - y1, 2))
+
+
 def wrapAngle(angle):
     """wrapAngle
     Calculates angles values between 0 and 2pi"""
@@ -290,7 +360,7 @@ def wrapAngle(angle):
 
 
 if __name__ == "__main__":
-    rospy.init_node("fetch_move_base_control", log_level=rospy.DEBUG)
+    rospy.init_node("fetch_move_base_control", log_level=rospy.INFO)
     rospy.loginfo("%s: starting fetch_move_base controller", rospy.get_name())
 
     controller = Controller()

@@ -5,7 +5,7 @@
     <arg name="output" default="screen" />
 
     <!-- Start control node -->
-    <node name="fetch_move_base_controller" pkg="fetch_move_base_control" type="base_controller.py" required="true">
+    <node name="fetch_move_base_controller" pkg="fetch_move_base_control" type="base_controller.py" required="true" >
         <rosparam command="load" file="$(find fetch_move_base_control)/config/pepper_move_base_control.yaml" />
     </node>
 
