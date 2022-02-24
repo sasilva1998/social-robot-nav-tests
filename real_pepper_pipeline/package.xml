@@ -59,6 +59,9 @@
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+  <!-- Own pepper sim dep -->
+  <depend>pepper_pipeline</depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
