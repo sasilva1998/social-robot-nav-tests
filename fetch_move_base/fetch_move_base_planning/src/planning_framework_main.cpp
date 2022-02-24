@@ -759,7 +759,8 @@ void OnlinePlannFramework::planningTimerCallback()
         simple_setup_->clearStartStates();
         simple_setup_->setStartState(start);
         simple_setup_->setGoalState(goal, goal_radius_);
-        // simple_setup_->getStateSpace()->setValidSegmentCountFactor(10.0);
+        // 
+        simple_setup_->getStateSpace()->setValidSegmentCountFactor(15.0);
 
         //=======================================================================
         // Set a modified sampler
@@ -809,7 +810,8 @@ void OnlinePlannFramework::planningTimerCallback()
 
             og::PathGeometric path = simple_setup_->getSolutionPath();
 
-            // path.interpolate(int(path.length() / 0.2));
+            // generates varios little segments for the waypoints obtained from the planner
+            path.interpolate(int(path.length() / 0.2)); 
 
             // path_planning_msgs::PathConstSpeed solution_path;
             ROS_INFO("%s:\n\tpath with cost %f has been found with simple_setup\n",
