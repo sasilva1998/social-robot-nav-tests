@@ -165,7 +165,7 @@ class Controller(object):
                 current_waypoint_angle = new_waypoint_angle
 
         if actual_next_waypoint_index is not None:
-            waypoints_list = waypoints_list[actual_next_waypoint_index+1:]
+            waypoints_list = waypoints_list[actual_next_waypoint_index + 1 :]
 
         for i in range(1, len(waypoints_list)):
             waypoint = waypoints_list[i]
@@ -231,7 +231,7 @@ class Controller(object):
                         self.desired_orientation_ - self.current_orientation_
                     )
 
-                    if abs(yaw_error) > 0.2:
+                    if abs(yaw_error) > 0.4:
                         rospy.logdebug(
                             "%s: orienting towards the next waypoint: %s",
                             rospy.get_name(),

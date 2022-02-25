@@ -152,7 +152,7 @@ public:
                        const ob::SpaceInformationPtr space) const;
 
     bool isRobotInFront(const ob::State *state, const pedsim_msgs::AgentState agentState,
-                       const ob::SpaceInformationPtr space) const;
+                        const ob::SpaceInformationPtr space) const;
 
 private:
     // ROS
@@ -259,12 +259,12 @@ private:
     /*
      * This is the angle of field of view of the robot.
      */
-    double robotDistanceView = 8;
+    double robotDistanceView = 6;
 
     /*
      * This is the velocity that will create de maximum distance for agent evaluation
      */
-    double robotVelocityThreshold = 0.35;
+    double robotVelocityThreshold = 0.38;
 };
 
 #endif

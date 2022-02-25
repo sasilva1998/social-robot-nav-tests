@@ -135,9 +135,9 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 2)
+    if (actualFOVDistance < 1)
     {
-        actualFOVDistance = 2;
+        actualFOVDistance = 1;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
@@ -491,8 +491,8 @@ double OmFclStateValidityCheckerR2::extendedPersonalSpaceFnc(const ob::State *st
 }
 
 bool OmFclStateValidityCheckerR2::isRobotInFront(const ob::State *state,
-                                                const pedsim_msgs::AgentState agentState,
-                                                const ob::SpaceInformationPtr space) const
+                                                 const pedsim_msgs::AgentState agentState,
+                                                 const ob::SpaceInformationPtr space) const
 
 {
     double tethaAgentRobot = atan2((odomData->pose.pose.position.y - agentState.pose.position.y),
@@ -567,9 +567,9 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 2)
+    if (actualFOVDistance < 1)
     {
-        actualFOVDistance = 2;
+        actualFOVDistance = 1;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
