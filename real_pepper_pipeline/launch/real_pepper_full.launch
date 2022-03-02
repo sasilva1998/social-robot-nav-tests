@@ -2,13 +2,20 @@
 <launch>
 
     <!-- real pepper robot bringup -->
-    <include file="$(find real_pepper_pipeline)/launch/pepper_full_py.launch">
+    <include file="$(find real_pepper_pipeline)/launch/pepper_full.launch">
         <arg name="nao_ip" default="192.168.160.68" />
+        <arg name="roscore_ip" default="sasm-XPS-17-9710:11311" />
+        <arg name="network_interface" default="wlp0s20f3" />
     </include>
 
     <!-- launching octomapping -->
     <include file="$(find real_pepper_pipeline)/launch/octomap_node.launch" />
 
+    <!-- package to control robot completely -->
+    <include file="$(find pepper_dcm_bringup)/launch/pepper_bringup.launch">
+        <arg name="robot_ip" default="192.168.160.68" />
+        <arg name="network_interface" default="wlp0s20f3" />
+    </include>
     <!-- proposed framework -->
     <!-- <include file="$(find pepper_pipeline)/launch/planner_drive.launch" /> -->
 

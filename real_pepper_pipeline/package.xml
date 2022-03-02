@@ -61,6 +61,8 @@
 
   <!-- Own pepper sim dep -->
   <depend>pepper_pipeline</depend>
+  <depend>naoqi_dcm_driver</depend>
+  <depend>pepper_dcm_bringup</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
