@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="robot_ip" default="192.168.0.101"/>
+    <arg name="robot_ip" default="192.168.12.68"/>
     <arg name="network_interface" default="wlp0s20f3"/>
 
     <!-- real pepper robot bringup -->
@@ -20,7 +20,7 @@
         <arg name="network_interface" default="$(arg network_interface)" />
     </include>
 
-    <!-- <include file="$(find real_pepper_pipeline)/launch/moveit_planner.launch" /> -->
+    <include file="$(find real_pepper_pipeline)/launch/moveit_planner.launch" />
 
 
     <!-- proposed framework -->
