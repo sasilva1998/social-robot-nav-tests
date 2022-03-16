@@ -15,7 +15,7 @@ class AgentStatesBroadcaster(object):
 
         # PUBLISHERS
         self.agents_pub = rospy.Publisher(
-            "pedsim_simulator/simulated_agents", AgentStates
+            "pedsim_simulator/simulated_agents", AgentStates, queue_size=10
         )
 
         # SUBSCRIBERS
@@ -58,7 +58,7 @@ class AgentStatesBroadcaster(object):
                 agent_states_list.append(i[1])
 
             agent_states.header.stamp = rospy.Time.now()
-            agent_states.header.frame_id = rospy.get_param("/frame_id")
+            agent_states.header.frame_id = rospy.get_param("~frame_id", "world")
             agent_states.agent_states = agent_states_list
             self.agents_pub.publish(agent_states)
             rospy.sleep(0.05)

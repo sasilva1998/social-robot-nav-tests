@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="real_pepper_pipeline" type="uwb_ped_bridge.py" name="uwb_ped_bridge_node"></node>
+
+    <arg name="hz" default="25.0" />
+
+    <node name="pedsim_visualizer" type="pedsim_visualizer_node" pkg="pedsim_visualizer" output="screen">
+        <param name="hz" value="$(arg hz)" type="double" />
+        <!-- <param name="walls_marker_scale" value="$(arg walls_scale)" type="double" /> -->
+        <!-- <remap from="/pedsim_simulator/simulated_agents" to="/pedsim_simulator/simulated_agents_overwritten" /> -->
+    </node>
+</launch>
