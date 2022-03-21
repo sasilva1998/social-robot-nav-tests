@@ -135,9 +135,9 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 1)
+    if (actualFOVDistance < 1.5)
     {
-        actualFOVDistance = 1;
+        actualFOVDistance = 1.5;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
@@ -567,9 +567,9 @@ bool OmFclStateValidityCheckerR2::isAgentInRFOV(const ob::State *state,
 
     double actualFOVDistance = robotDistanceView / robotVelocityThreshold * robotVelocity;
 
-    if (actualFOVDistance < 1)
+    if (actualFOVDistance < 1.5)
     {
-        actualFOVDistance = 1;
+        actualFOVDistance = 1.5;
     }
 
     // ROS_INFO_STREAM("distance of robot view " << actualFOVDistance);
