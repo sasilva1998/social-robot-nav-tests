@@ -106,13 +106,13 @@ struct SocialAgentsExtended
  * Autopilot Laser Octomap.
  * Create an Octomap using information from laser scans.
  */
-class LaserOctomap
+class PedsimLaserOctomap
 {
 public:
   //! Constructor
-  LaserOctomap();
+  PedsimLaserOctomap();
   //! Destructor
-  virtual ~LaserOctomap();
+  virtual ~PedsimLaserOctomap();
   //! Callback for getting the laser_scan data
   void laserScanCallback(const sensor_msgs::LaserScanConstPtr &laser_scan_msg);
   //! Callback for getting social simulated agents data
@@ -231,7 +231,7 @@ protected:
  * Subscribers to odometry and laser scan
  * Publishers to visualize the Octomap.
  */
-LaserOctomap::LaserOctomap()
+PedsimLaserOctomap::PedsimLaserOctomap()
     : nh_(),
       local_nh_("~"),
       fixed_frame_("/fixed_frame"),
@@ -421,7 +421,7 @@ LaserOctomap::LaserOctomap()
   //=======================================================================
   // Odometry data (feedback)
   odom_sub_ =
-      nh_.subscribe(odometry_topic_, 1, &LaserOctomap::odomCallback, this);
+      nh_.subscribe(odometry_topic_, 1, &PedsimLaserOctomap::odomCallback, this);
   nav_sts_available_ = false;
   if (!nav_sts_available_)
     ROS_WARN("%s:\n\tWaiting for odometry\n",
@@ -442,7 +442,7 @@ LaserOctomap::LaserOctomap()
     {
       LaserScanExtended *laser_scan_info = *laser_scan_it;
       laser_scan_info->sub = nh_.subscribe(
-          laser_scan_info->topic, 10, &LaserOctomap::laserScanCallback, this);
+          laser_scan_info->topic, 10, &PedsimLaserOctomap::laserScanCallback, this);
     }
 
     for (std::vector<PointCloudExtended *>::iterator point_cloud_it =
@@ -451,7 +451,7 @@ LaserOctomap::LaserOctomap()
     {
       PointCloudExtended *point_cloud_info = *point_cloud_it;
       point_cloud_info->sub = nh_.subscribe(
-          point_cloud_info->topic, 10, &LaserOctomap::pointCloudCallback, this);
+          point_cloud_info->topic, 10, &PedsimLaserOctomap::pointCloudCallback, this);
     }
 
     for (std::vector<SocialAgentsExtended *>::iterator social_agents_it =
@@ -460,13 +460,13 @@ LaserOctomap::LaserOctomap()
     {
       SocialAgentsExtended *social_agents_info = *social_agents_it;
       social_agents_info->sub = nh_.subscribe(
-          social_agents_info->topic, 10, &LaserOctomap::agentsDataCallback, this);
+          social_agents_info->topic, 10, &PedsimLaserOctomap::agentsDataCallback, this);
     }
   }
 
   // Global map
   odom_sub_ = nh_.subscribe(global_map_topic_, 1,
-                            &LaserOctomap::globalMapCallback, this);
+                            &PedsimLaserOctomap::globalMapCallback, this);
   global_map_available_ = false;
   if (!global_map_available_)
     ROS_WARN("%s:\n\tWaiting for global map\n",
@@ -484,18 +484,18 @@ LaserOctomap::LaserOctomap()
   // Services
   //=======================================================================
   save_binary_octomap_srv_ = local_nh_.advertiseService(
-      "save_binary", &LaserOctomap::saveBinaryOctomapSrv, this);
+      "save_binary", &PedsimLaserOctomap::saveBinaryOctomapSrv, this);
   save_full_octomap_srv_ = local_nh_.advertiseService(
-      "save_full", &LaserOctomap::saveFullOctomapSrv, this);
+      "save_full", &PedsimLaserOctomap::saveFullOctomapSrv, this);
   get_binary_octomap_srv_ = local_nh_.advertiseService(
-      "get_binary", &LaserOctomap::getBinaryOctomapSrv, this);
+      "get_binary", &PedsimLaserOctomap::getBinaryOctomapSrv, this);
   merge_global_map_to_octomap_srv_ = local_nh_.advertiseService(
-      "clean_merge_octomap", &LaserOctomap::mergeGlobalMapToOctomapSrv, this);
+      "clean_merge_octomap", &PedsimLaserOctomap::mergeGlobalMapToOctomapSrv, this);
 
   // Timer for publishing
   if (rviz_timer_ > 0.0)
     timer_ = nh_.createTimer(ros::Duration(rviz_timer_),
-                             &LaserOctomap::timerCallback, this);
+                             &PedsimLaserOctomap::timerCallback, this);
 
   // Info
   ROS_INFO(
@@ -517,14 +517,14 @@ LaserOctomap::LaserOctomap()
 }
 
 //! Destructor.
-LaserOctomap::~LaserOctomap()
+PedsimLaserOctomap::~PedsimLaserOctomap()
 {
   ROS_INFO("%s:\n\tOctree has been deleted\n",
            ros::this_node::getName().c_str());
   delete octree_;
 }
 
-void LaserOctomap::mergeGlobalMapToOctomap()
+void PedsimLaserOctomap::mergeGlobalMapToOctomap()
 {
   ros::Time t;
   std::string err = "";
@@ -551,7 +551,7 @@ void LaserOctomap::mergeGlobalMapToOctomap()
     }
 }
 
-void LaserOctomap::globalMapCallback(
+void PedsimLaserOctomap::globalMapCallback(
     const nav_msgs::OccupancyGridPtr &map_msg)
 {
   global_map_.header = map_msg->header;
@@ -568,7 +568,7 @@ void LaserOctomap::globalMapCallback(
 /*!
  * Callback for receiving the laser scan data (taken from octomap_server)
  */
-void LaserOctomap::pointCloudCallback(
+void PedsimLaserOctomap::pointCloudCallback(
     const sensor_msgs::PointCloud2::ConstPtr &cloud)
 {
   //
@@ -690,9 +690,9 @@ void LaserOctomap::pointCloudCallback(
   //    publishAll(cloud->header.stamp);
 }
 
-void LaserOctomap::insertScan(const tf::Point &sensorOriginTf,
-                              const PCLPointCloud &ground,
-                              const PCLPointCloud &nonground)
+void PedsimLaserOctomap::insertScan(const tf::Point &sensorOriginTf,
+                                    const PCLPointCloud &ground,
+                                    const PCLPointCloud &nonground)
 {
   octomap::point3d sensorOrigin = octomap::pointTfToOctomap(sensorOriginTf);
 
@@ -885,9 +885,9 @@ void LaserOctomap::insertScan(const tf::Point &sensorOriginTf,
   //#endif
 }
 
-void LaserOctomap::filterGroundPlane(const PCLPointCloud &pc,
-                                     PCLPointCloud &ground,
-                                     PCLPointCloud &nonground) const
+void PedsimLaserOctomap::filterGroundPlane(const PCLPointCloud &pc,
+                                           PCLPointCloud &ground,
+                                           PCLPointCloud &nonground) const
 {
   ground.header = pc.header;
   nonground.header = pc.header;
@@ -1028,7 +1028,7 @@ void LaserOctomap::filterGroundPlane(const PCLPointCloud &pc,
 /*!
  * Callback for receiving the laser scan data
  */
-void LaserOctomap::laserScanCallback(
+void PedsimLaserOctomap::laserScanCallback(
     const sensor_msgs::LaserScanConstPtr &laser_scan_msg)
 {
   ros::Time t;
@@ -1155,7 +1155,7 @@ void LaserOctomap::laserScanCallback(
 /*!
  * Callback for getting simulated agents data
  */
-void LaserOctomap::agentsDataCallback(const pedsim_msgs::AgentStatesConstPtr &agent_data_msg)
+void PedsimLaserOctomap::agentsDataCallback(const pedsim_msgs::AgentStatesConstPtr &agent_data_msg)
 {
   if (!nav_sts_available_)
     nav_sts_available_ = true;
@@ -1165,7 +1165,7 @@ void LaserOctomap::agentsDataCallback(const pedsim_msgs::AgentStatesConstPtr &ag
 /*!
  * Callback for getting updated vehicle odometry.
  */
-void LaserOctomap::odomCallback(const nav_msgs::OdometryConstPtr &odom_msg)
+void PedsimLaserOctomap::odomCallback(const nav_msgs::OdometryConstPtr &odom_msg)
 {
   if (!nav_sts_available_)
     nav_sts_available_ = true;
@@ -1175,7 +1175,7 @@ void LaserOctomap::odomCallback(const nav_msgs::OdometryConstPtr &odom_msg)
 /*!
  * Callback for publishing the map periodically using the Octomap RViz plugin.
  */
-void LaserOctomap::timerCallback(const ros::TimerEvent &e)
+void PedsimLaserOctomap::timerCallback(const ros::TimerEvent &e)
 {
   // Declare message
   octomap_msgs::Octomap msg;
@@ -1191,8 +1191,8 @@ void LaserOctomap::timerCallback(const ros::TimerEvent &e)
 /*!
  * Service for saving the binary Octomap into the home folder
  */
-bool LaserOctomap::saveBinaryOctomapSrv(std_srvs::Empty::Request &req,
-                                        std_srvs::Empty::Response &res)
+bool PedsimLaserOctomap::saveBinaryOctomapSrv(std_srvs::Empty::Request &req,
+                                              std_srvs::Empty::Response &res)
 {
   // Saves current octree_ in home folder
   std::string fpath(getenv("HOME"));
@@ -1204,8 +1204,8 @@ bool LaserOctomap::saveBinaryOctomapSrv(std_srvs::Empty::Request &req,
 /*!
  * Service for cleaning and merging the octomap
  */
-bool LaserOctomap::mergeGlobalMapToOctomapSrv(std_srvs::Empty::Request &req,
-                                              std_srvs::Empty::Response &res)
+bool PedsimLaserOctomap::mergeGlobalMapToOctomapSrv(std_srvs::Empty::Request &req,
+                                                    std_srvs::Empty::Response &res)
 {
   this->mergeGlobalMapToOctomap();
   return true;
@@ -1215,8 +1215,8 @@ bool LaserOctomap::mergeGlobalMapToOctomapSrv(std_srvs::Empty::Request &req,
 /*!
  * Service for saving the full Octomap into the home folder
  */
-bool LaserOctomap::saveFullOctomapSrv(std_srvs::Empty::Request &req,
-                                      std_srvs::Empty::Response &res)
+bool PedsimLaserOctomap::saveFullOctomapSrv(std_srvs::Empty::Request &req,
+                                            std_srvs::Empty::Response &res)
 {
   // Saves current octree_ in home folder (full probabilities)
   std::string fpath(getenv("HOME"));
@@ -1228,8 +1228,8 @@ bool LaserOctomap::saveFullOctomapSrv(std_srvs::Empty::Request &req,
 /*!
  * Service for getting the binary Octomap
  */
-bool LaserOctomap::getBinaryOctomapSrv(OctomapSrv::Request &req,
-                                       OctomapSrv::GetOctomap::Response &res)
+bool PedsimLaserOctomap::getBinaryOctomapSrv(OctomapSrv::Request &req,
+                                             OctomapSrv::GetOctomap::Response &res)
 {
   ROS_INFO("%s:\n\tSending binary map data on service request\n",
            ros::this_node::getName().c_str());
@@ -1246,7 +1246,7 @@ bool LaserOctomap::getBinaryOctomapSrv(OctomapSrv::Request &req,
 /*!
  * Service for saving the binary of the Octomap into the home folder
  */
-void LaserOctomap::publishMap()
+void PedsimLaserOctomap::publishMap()
 {
   // Declare message and resize
   visualization_msgs::MarkerArray occupiedNodesVis;
@@ -1314,8 +1314,8 @@ void LaserOctomap::publishMap()
 }
 
 //! Filter outliers
-void LaserOctomap::filterSingleOutliers(sensor_msgs::LaserScan &laser_scan_msg,
-                                        std::vector<bool> &rngflags)
+void PedsimLaserOctomap::filterSingleOutliers(sensor_msgs::LaserScan &laser_scan_msg,
+                                              std::vector<bool> &rngflags)
 {
   int n(laser_scan_msg.ranges.size());
   double thres(laser_scan_msg.range_max / 10.0);
@@ -1359,7 +1359,7 @@ int main(int argc, char **argv)
   ros::NodeHandle private_nh("~");
 
   // Constructor
-  LaserOctomap mapper;
+  PedsimLaserOctomap mapper;
 
   // Spin
   ros::spin();
