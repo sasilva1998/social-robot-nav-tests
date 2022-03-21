@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   laser_geometry
   pcl_ros
   pcl_conversions
+  pedsim_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -116,7 +117,7 @@ find_package(PCL REQUIRED QUIET COMPONENTS common sample_consensus io segmentati
 catkin_package(
 #  INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS ${PACKAGE_DEPENDENCIES}
+  CATKIN_DEPENDS ${PACKAGE_DEPENDENCIES} pedsim_msgs
   DEPENDS octomap PCL
 )
 
@@ -147,6 +148,10 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(fetch_move_base_mapper src/octomap_ls_pc.cpp)
 target_link_libraries(fetch_move_base_mapper ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(fetch_move_base_pedsim_mapper src/octomap_pedsim.cpp)
+target_link_libraries(fetch_move_base_pedsim_mapper ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
