@@ -90,7 +90,7 @@
     <!-- <include file="$(find pepper_pipeline)/launch/sfm_drive.launch" /> -->
 
     <!-- this node spawn pedsim actors to gazebo once, then the plugin updates their pose -->
-    <!-- <node pkg="pedsim_gazebo_plugin" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents" output="screen" /> -->
+    <node pkg="pedsim_gazebo_plugin" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents" output="screen" />
 
     <!-- robot driving controller -->
     <!-- <node name="driving_controller" type="simulate_diff_drive_robot" pkg="pedsim_simulator" output="screen">
@@ -101,4 +101,6 @@
         <param name="robot_frame" value="$(arg robot_frame)" type="string" />
         <param name="publish_tf" value="$(arg publish_tf)" type="bool" />
     </node> -->
+
+    <node pkg="pedsim_simulator" type="pedsim_frames_publisher.py" name="pedsim_tf_node" output="screen" />
 </launch>

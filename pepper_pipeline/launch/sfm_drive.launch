@@ -1,12 +1,12 @@
 <launch>
 
-    <node pkg="sfm_diff_drive" type="sfm_drive_server_pepper.py" name="sfm_drive_node">
+    <node pkg="sfm_diff_drive" type="sfm_drive_server_pepper.py" name="sfm_drive_node" output="screen">
         <param name="force_desired" value="10" />
         <param name="force_obstacle" value="10" />
-        <param name="force_social" value="50" />
+        <param name="force_social" value="35" />
         <param name="cmd_vel_topic" value="/pepper/cmd_vel" />
-        <param name="max_vel" value="0.6" />
-        <param name="max_vel_turn" value="0.5" />
+        <param name="max_vel" value="0.35" />
+        <param name="max_vel_turn" value="0.7" />
         <param name="omni_drive" value="false" />
     </node>
 

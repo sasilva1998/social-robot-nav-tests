@@ -20,10 +20,13 @@
     <arg name="headless" default="false" />
     <arg name="paused" default="false" />
     <arg name="use_sim_time" default="true" />
-    <arg name="gui" default="true" />
+    <arg name="gui" default="false" />
 
-    <arg name="x_pos" default="1.51" />
-    <arg name="y_pos" default="-1.51" />
+    <arg name="x_pos" default="-12" />
+    <arg name="y_pos" default="2.5" />
+
+    <!-- <arg name="x_pos" default="1.51" />
+    <arg name="y_pos" default="-1.51" /> -->
 
     <!-- COB world spawn -->
     <env name="GAZEBO_MODEL_PATH" value="$(arg pkg_gazebo_worlds)/Media/models:$(optenv GAZEBO_MODEL_PATH)" />
@@ -128,10 +131,10 @@
         <group if="$(arg online)">
             <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
                 <param name="resolution" value="0.05" />
-                <param name="frame_id" type="string" value="odom" />
+                <param name="frame_id" type="string" value="world" />
                 <param name="pointcloud_min_z" type="double" value="0.1" />
                 <param name="latch" type="bool" value="false" />
-                <remap from="cloud_in" to="/pepper/camera/depth/points" />
+                <remap from="cloud_in" to="/pepper/camera/depth/points_filtered" />
             </node>
         </group>
 
@@ -326,5 +329,7 @@
     <group if="$(arg rviz_gui)">
         <node respawn="$(arg respawn)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(arg bringup_package_path)/rviz/$(arg config).rviz" output="$(arg output)" />
     </group>
+
+    <include file="$(find pepper_pipeline)/launch/pointcloud_filter.launch" />
 
 </launch>
