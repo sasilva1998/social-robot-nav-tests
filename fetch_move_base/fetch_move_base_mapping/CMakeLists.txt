@@ -149,9 +149,6 @@ include_directories(
 add_executable(fetch_move_base_mapper src/octomap_ls_pc.cpp)
 target_link_libraries(fetch_move_base_mapper ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(fetch_move_base_pedsim_mapper src/octomap_pedsim.cpp)
-target_link_libraries(fetch_move_base_pedsim_mapper ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
