@@ -2,7 +2,9 @@
 
 import rospy
 from pedsim_msgs.msg import AgentStates, AgentState
-from geometry_msgs.msg import TransformStamped
+
+# from geometry_msgs.msg import TransformStamped
+from pozyx_bridge.msg import UwbTransformStampedArray
 
 
 class AgentStatesBroadcaster(object):
@@ -20,34 +22,36 @@ class AgentStatesBroadcaster(object):
 
         # SUBSCRIBERS
         self.pozyx_sub = rospy.Subscriber(
-            "uwb_sensor", TransformStamped, self.agents_register_callback
+            "uwb_sensor", UwbTransformStampedArray, self.agents_register_callback
         )
 
     def agents_register_callback(self, data):
-        if data.child_frame_id[1:] not in self.agents_dict:
-            self.agent_counter += 1
-            new_agent = AgentState()
-            new_agent.header.stamp = data.header.stamp
-            new_agent.header.frame_id = data.header.frame_id
-            new_agent.id = self.agent_counter
 
-            new_agent.pose.position.x = data.transform.translation.x
-            new_agent.pose.position.y = data.transform.translation.y
-            new_agent.pose.position.z = data.transform.translation.z
+        for i in data.transforms_array:
+            if i.transform.child_frame_id[1:] not in self.agents_dict:
+                self.agent_counter += 1
+                new_agent = AgentState()
+                new_agent.header.stamp = i.transform.header.stamp
+                new_agent.header.frame_id = i.transform.header.frame_id
+                new_agent.id = self.agent_counter
 
-            new_agent.pose.orientation = data.transform.rotation
+                new_agent.pose.position.x = i.transform.transform.translation.x
+                new_agent.pose.position.y = i.transform.transform.translation.y
+                new_agent.pose.position.z = i.transform.transform.translation.z
 
-            self.agents_dict[data.child_frame_id] = new_agent
-        else:
-            agent_update = self.agents_dict[data.child_frame_id]
-            agent_update.header.stamp = data.header.stamp
-            agent_update.pose.position.x = data.transform.translation.x
-            agent_update.pose.position.y = data.transform.translation.y
-            agent_update.pose.position.z = data.transform.translation.z
+                new_agent.pose.orientation = i.transform.transform.rotation
 
-            agent_update.pose.orientation = data.transform.rotation
+                self.agents_dict[i.transform.child_frame_id] = new_agent
+            else:
+                agent_update = self.agents_dict[i.transform.child_frame_id]
+                agent_update.header.stamp = i.transform.header.stamp
+                agent_update.pose.position.x = i.transform.transform.translation.x
+                agent_update.pose.position.y = i.transform.transform.translation.y
+                agent_update.pose.position.z = i.transform.transform.translation.z
 
-            self.agents_dict[data.child_frame_id] = agent_update
+                agent_update.pose.orientation = i.transform.transform.rotation
+
+                self.agents_dict[i.transform.child_frame_id] = agent_update
 
     def run(self):
         while not rospy.is_shutdown():
