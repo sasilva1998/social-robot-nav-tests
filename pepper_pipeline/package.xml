@@ -83,6 +83,9 @@
   <depend>fetch_move_base_control</depend>
   <depend>fetch_move_base_mapping</depend>
 
+  <!-- pcd -->
+  <depend>ros_pcdfilter</depend>
+
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
