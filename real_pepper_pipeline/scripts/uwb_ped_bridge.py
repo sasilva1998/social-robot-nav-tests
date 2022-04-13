@@ -2,9 +2,7 @@
 
 import rospy
 from pedsim_msgs.msg import AgentStates, AgentState
-
-# from geometry_msgs.msg import TransformStamped
-from pozyx_bridge.msg import UwbTransformStampedArray
+from pozyx_msgs.msg import UwbTransformStampedArray
 
 
 class AgentStatesBroadcaster(object):
@@ -41,9 +39,15 @@ class AgentStatesBroadcaster(object):
 
                 new_agent.pose.orientation = i.transform.transform.rotation
 
-                self.agents_dict[i.transform.child_frame_id] = new_agent
+                self.agents_dict[i.transform.child_frame_id] = [
+                    new_agent,
+                    new_agent,
+                    rospy.Time.now(),
+                ]
             else:
-                agent_update = self.agents_dict[i.transform.child_frame_id]
+                old_agent = self.agents_dict[i.transform.child_frame_id][0]
+                # pose update
+                agent_update = self.agents_dict[i.transform.child_frame_id][0]
                 agent_update.header.stamp = i.transform.header.stamp
                 agent_update.pose.position.x = i.transform.transform.translation.x
                 agent_update.pose.position.y = i.transform.transform.translation.y
@@ -51,7 +55,27 @@ class AgentStatesBroadcaster(object):
 
                 agent_update.pose.orientation = i.transform.transform.rotation
 
-                self.agents_dict[i.transform.child_frame_id] = agent_update
+                # velocity calculation
+
+                last_time = self.agents_dict[i.transform.child_frame_id][2]
+
+                agent_update.twist.linear.x = (
+                    agent_update.pose.position.x - old_agent.pose.position.x
+                ) / (rospy.Time.now() - last_time)
+
+                agent_update.twist.linear.y = (
+                    agent_update.pose.position.y - old_agent.pose.position.y
+                ) / (rospy.Time.now() - last_time)
+
+                agent_update.twist.linear.z = (
+                    agent_update.pose.position.z - old_agent.pose.position.z
+                ) / (rospy.Time.now() - last_time)
+
+                self.agents_dict[i.transform.child_frame_id] = [
+                    agent_update,
+                    old_agent,
+                    rospy.Time.now(),
+                ]
 
     def run(self):
         while not rospy.is_shutdown():
@@ -59,7 +83,7 @@ class AgentStatesBroadcaster(object):
             agent_states_list = []
 
             for i in self.agents_dict.items():
-                agent_states_list.append(i[1])
+                agent_states_list.append(i[1][0])
 
             agent_states.header.stamp = rospy.Time.now()
             agent_states.header.frame_id = rospy.get_param("~frame_id", "world")
