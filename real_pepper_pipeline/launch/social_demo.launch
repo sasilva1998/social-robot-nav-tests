@@ -1,0 +1,13 @@
+<launch>
+
+    <include file="$(find real_pepper_pipeline)/launch/real_pepper_full.launch" />
+
+    <!-- launching octomapping -->
+    <include file="$(find real_pepper_pipeline)/launch/octomap_node.launch" />
+
+    <node pkg="tf" type="static_transform_publisher" name="world_to_map" args="0 0 0 0 0 0 world map 100" />
+
+    <!-- proposed framework -->
+    <!-- <include file="$(find pepper_pipeline)/launch/planner_drive.launch" /> -->
+
+</launch>
