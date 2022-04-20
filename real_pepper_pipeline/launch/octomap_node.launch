@@ -1,22 +1,12 @@
 <?xml version="1.0"?>
 <launch>
 
-
-    <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node">
-        <remap from="points_in" to="/hololens/pc" />
-        <remap from="points2_out" to="/hololens/pc2" />
-        <!--
-            <remap from="points2_in" to="velodyne_points"/>
-            <remap from="points_out" to="velodyne_points" />
-            -->
-    </node>
-
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
         <param name="resolution" value="0.05" />
-        <param name="frame_id" type="string" value="map" />
+        <param name="frame_id" type="string" value="odom" />
         <param name="pointcloud_min_z" type="double" value="0.1" />
-        <param name="pointcloud_min_z" type="double" value="1.6" />
-        <param name="latch" type="bool" value="false" />
+        <param name="pointcloud_max_z" type="double" value="1.6" />
+        <param name="latch" type="bool" value="true" />
         <remap from="cloud_in" to="/hololens/pc2" />
     </node>
 </launch>
