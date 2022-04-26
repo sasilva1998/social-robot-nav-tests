@@ -86,7 +86,7 @@ class AgentStatesBroadcaster(object):
                 agent_states_list.append(i[1][0])
 
             agent_states.header.stamp = rospy.Time.now()
-            agent_states.header.frame_id = rospy.get_param("~frame_id", "world")
+            agent_states.header.frame_id = rospy.get_param("~frame_id", "map")
             agent_states.agent_states = agent_states_list
             self.agents_pub.publish(agent_states)
             rospy.sleep(0.05)

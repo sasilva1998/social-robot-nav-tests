@@ -1,0 +1,17 @@
+frame_id: "map"
+frequency: 80
+gateway_ip: "192.168.0.102"
+gateway_port: 1883
+tag_list: ["tag1", "tag2"]
+
+tag1:
+  id: 7757
+
+tag2:
+  id: 7762
+
+# tag3:
+#   id: 30208
+
+# tag4:
+#   id: 30208

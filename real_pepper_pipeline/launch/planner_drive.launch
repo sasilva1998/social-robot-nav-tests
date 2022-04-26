@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="output" default="screen" />
+
+    <!-- Start control node -->
+    <node name="fetch_move_base_controller" pkg="fetch_move_base_control" type="base_controller.py" required="true" >
+        <rosparam command="load" file="$(find real_pepper_pipeline)/config/pepper_move_base_control.yaml" />
+    </node>
+
+    <node name="fetch_move_base_planner" pkg="fetch_move_base_planning" type="fetch_move_base_planner" required="true" output="screen">
+        <rosparam command="load" file="$(find real_pepper_pipeline)/config/pepper_move_base_planning.yaml" />
+    </node>
+
+</launch>
