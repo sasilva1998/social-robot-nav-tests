@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <launch>
     <include file="$(find hololens_ros_bridge)/launch/holo_test.launch">
-        <arg name="hololens_ip" default="192.168.0.103" />
+        <arg name="hololens_ip" default="192.168.0.101" />
         <arg name="hololens_port" default="1234" />
     
-
         <!-- ! pc and hololens frames cant be the same -->
         <!-- hololens frames -->
         <arg name="parent_frame" default="odom" />
