@@ -1,6 +1,6 @@
 frame_id: "map"
 frequency: 80
-gateway_ip: "192.168.0.102"
+gateway_ip: "10.0.0.254"
 gateway_port: 1883
 tag_list: ["tag1", "tag2"]
 
