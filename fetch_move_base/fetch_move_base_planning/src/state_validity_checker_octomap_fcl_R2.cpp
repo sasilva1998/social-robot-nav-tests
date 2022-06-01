@@ -51,13 +51,13 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
         if (abs_octree_)
         {
             octree_ = dynamic_cast<octomap::OcTree *>(abs_octree_);
-            tree_ = new fcl::OcTree(std::shared_ptr<const octomap::OcTree>(octree_));
-            tree_obj_ = new fcl::CollisionObject((std::shared_ptr<fcl::CollisionGeometry>(tree_)));
+            tree_ = new fcl::OcTreef(std::shared_ptr<const octomap::OcTree>(octree_));
+            tree_obj_ = new fcl::CollisionObjectf((std::shared_ptr<fcl::CollisionGeometryf>(tree_)));
         }
 
-        fetch_collision_solid_.reset(new fcl::Cylinder(fetch_base_radius_, fetch_base_height_));
+        fetch_collision_solid_.reset(new fcl::Cylinderf(fetch_base_radius_, fetch_base_height_));
 
-        agent_collision_solid_.reset(new fcl::Cylinder(0.35, fetch_base_height_));
+        agent_collision_solid_.reset(new fcl::Cylinderf(0.35, fetch_base_height_));
 
         octree_res_ = octree_->getResolution();
         octree_->getMetricMin(octree_min_x_, octree_min_y_, octree_min_z_);
@@ -109,14 +109,15 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
     // FCL
     fcl::Transform3f fetch_tf;
     fetch_tf.setIdentity();
-    fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], fetch_base_height_ / 2.0));
-    fcl::Quaternion3f qt0;
-    qt0.fromEuler(0.0, 0.0, 0.0);
-    fetch_tf.setQuatRotation(qt0);
+    fetch_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], fetch_base_height_ / 2.0));
+    // fcl::Quaternion3f qt0;
+    // qt0.fromEuler(0.0, 0.0, 0.0);
+    // fetch_tf.setQuatRotation(qt0);
 
-    fcl::CollisionObject vehicle_co(fetch_collision_solid_, fetch_tf);
-    fcl::CollisionRequest collision_request;
-    fcl::CollisionResult collision_result;
+    fcl::CollisionObjectf vehicle_co(fetch_collision_solid_, fetch_tf);
+
+    fcl::CollisionRequestf collision_request;
+    fcl::CollisionResultf collision_result;
 
     fcl::collide(tree_obj_, &vehicle_co, collision_request, collision_result);
 
@@ -151,18 +152,20 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             double dRobotAgent =
                 std::sqrt(std::pow(agentState.pose.position.x - odomData->pose.pose.position.x, 2) +
                           std::pow(agentState.pose.position.y - odomData->pose.pose.position.y, 2));
+          
+          
             if (dRobotAgent < actualFOVDistance)
             {
                 // FCL
                 fcl::Transform3f agent_tf;
                 agent_tf.setIdentity();
-                agent_tf.setTranslation(fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y,
+                agent_tf.translate(fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y,
                                                    fetch_base_height_ / 2.0));
-                fcl::Quaternion3f qt0;
-                qt0.fromEuler(0.0, 0.0, 0.0);
-                agent_tf.setQuatRotation(qt0);
+                // fcl::Quaternion3f qt0;
+                // qt0.fromEuler(0.0, 0.0, 0.0);
+                // agent_tf.setQuatRotation(qt0);
 
-                fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
+                fcl::CollisionObjectf agent_co(agent_collision_solid_, agent_tf);
                 fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
 
                 if (collision_result.isCollision())
@@ -176,13 +179,13 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             // FCL
             fcl::Transform3f agent_tf;
             agent_tf.setIdentity();
-            agent_tf.setTranslation(
-                fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
-            fcl::Quaternion3f qt0;
-            qt0.fromEuler(0.0, 0.0, 0.0);
-            agent_tf.setQuatRotation(qt0);
+            agent_tf.translate(
+                fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
+            // fcl::Quaternion3f qt0;
+            // qt0.fromEuler(0.0, 0.0, 0.0);
+            // agent_tf.setQuatRotation(qt0);
 
-            fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
+            fcl::CollisionObjectf agent_co(agent_collision_solid_, agent_tf);
             fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
 
             if (collision_result.isCollision())
@@ -215,14 +218,14 @@ double OmFclStateValidityCheckerR2::clearance(const ob::State *state) const
     // FCL
     fcl::Transform3f vehicle_tf;
     vehicle_tf.setIdentity();
-    vehicle_tf.setTranslation(fcl::Vec3f(state_r2->values[0] + 3.5, state_r2->values[1], 0.0));
-    fcl::Quaternion3f qt0;
-    qt0.fromEuler(0.0, 0.0, 0.0);
-    vehicle_tf.setQuatRotation(qt0);
+    vehicle_tf.translate(fcl::Vector3f(state_r2->values[0] + 3.5, state_r2->values[1], 0.0));
+    // fcl::Quaternion3f qt0;
+    // qt0.fromEuler(0.0, 0.0, 0.0);
+    // vehicle_tf.setQuatRotation(qt0);
 
-    fcl::CollisionObject vehicle_co(fetch_collision_solid_, vehicle_tf);
-    fcl::DistanceRequest distanceRequest;
-    fcl::DistanceResult distanceResult;
+    fcl::CollisionObjectf vehicle_co(fetch_collision_solid_, vehicle_tf);
+    fcl::DistanceRequestf distanceRequest;
+    fcl::DistanceResultf distanceResult;
 
     fcl::distance(tree_obj_, &vehicle_co, distanceRequest, distanceResult);
 
@@ -257,16 +260,16 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
     // FCL
     fcl::Transform3f fetch_tf;
     fetch_tf.setIdentity();
-    fetch_tf.setTranslation(fcl::Vec3f(state_r2->values[0], state_r2->values[1], 0.0));
-    fcl::Quaternion3f qt0;
-    qt0.fromEuler(0.0, 0.0, 0.0);
-    fetch_tf.setQuatRotation(qt0);
+    fetch_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], 0.0));
+    // fcl::Quaternion3f qt0;
+    // qt0.fromEuler(0.0, 0.0, 0.0);
+    // fetch_tf.setQuatRotation(qt0);
 
-    std::shared_ptr<fcl::Cylinder> cyl0(new fcl::Cylinder(fetch_base_radius_ + 0.2, fetch_base_height_));
+    std::shared_ptr<fcl::Cylinderf> cyl0(new fcl::Cylinderf(fetch_base_radius_ + 0.2, fetch_base_height_));
 
-    fcl::CollisionObject cyl0_co(cyl0, fetch_tf);
-    fcl::CollisionRequest collision_request;
-    fcl::CollisionResult collision_result;
+    fcl::CollisionObjectf cyl0_co(cyl0, fetch_tf);
+    fcl::CollisionRequestf collision_request;
+    fcl::CollisionResultf collision_result;
 
     fcl::collide(tree_obj_, &cyl0_co, collision_request, collision_result);
 
@@ -274,8 +277,8 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
         state_risk = 10.0;  // 15, 30
     else
     {
-        std::shared_ptr<fcl::Cylinder> cyl1(new fcl::Cylinder(fetch_base_radius_ + 0.4, fetch_base_height_));
-        fcl::CollisionObject cyl1_co(cyl1, fetch_tf);
+        std::shared_ptr<fcl::Cylinderf> cyl1(new fcl::Cylinderf(fetch_base_radius_ + 0.4, fetch_base_height_));
+        fcl::CollisionObjectf cyl1_co(cyl1, fetch_tf);
         collision_result.clear();
 
         fcl::collide(tree_obj_, &cyl1_co, collision_request, collision_result);
