@@ -38,14 +38,14 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "collision_detector_node");
     ros::NodeHandle n;
 
-    double fetch_base_radius_ = 0.20;
-    double fetch_base_height_ = 1.22;
+    double pepper_base_radius_ = 0.20;
+    double pepper_base_height_ = 1.22;
 
-    std::shared_ptr<fcl::Cylinder<float>> fetch_collision_solid_;
+    std::shared_ptr<fcl::Cylinder<float>> pepper_collision_solid_;
     std::shared_ptr<fcl::Cylinder<float>> agent_collision_solid_;
 
-    fetch_collision_solid_.reset(new fcl::Cylinder<float>(fetch_base_radius_, fetch_base_height_));
-    agent_collision_solid_.reset(new fcl::Cylinder<float>(0.35, fetch_base_height_));
+    pepper_collision_solid_.reset(new fcl::Cylinder<float>(pepper_base_radius_, pepper_base_height_));
+    agent_collision_solid_.reset(new fcl::Cylinder<float>(0.35, pepper_base_height_));
 
     GetOctomap::Request req;
     GetOctomap::Response resp;
@@ -84,9 +84,9 @@ int main(int argc, char **argv)
 
             fcl::CollisionObject<float> *tree_obj_= new fcl::CollisionObject<float>((std::shared_ptr<fcl::CollisionGeometry<float>>(tree_)));
 
-            fcl::CollisionObject<float> vehicle_co(fetch_collision_solid_); 
+            fcl::CollisionObject<float> vehicle_co(pepper_collision_solid_); 
 
-            vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, fetch_base_height_ / 2.0));
+            vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
 
             fcl::collide(tree_obj_, &vehicle_co, collision_request, collision_result_octomap);
 
@@ -112,9 +112,9 @@ int main(int argc, char **argv)
                 if (!foundCollision)
                 {
 
-                    fcl::CollisionObject<float> vehicle_co(fetch_collision_solid_);
+                    fcl::CollisionObject<float> vehicle_co(pepper_collision_solid_);
 
-                    vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, fetch_base_height_ / 2.0));
+                    vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
 
                     pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
 
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
                         fcl::CollisionObject<float> agent_co(agent_collision_solid_);
 
-                        agent_co.setTranslation(fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
+                        agent_co.setTranslation(fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, pepper_base_height_ / 2.0));
                         fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
 
                         if (collision_result.isCollision())

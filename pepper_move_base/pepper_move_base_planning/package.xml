@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>fetch_move_base_planning</name>
+  <name>pepper_move_base_planning</name>
   <version>0.0.0</version>
-  <description>The fetch_move_base_planning package</description>
+  <description>The pepper_move_base_planning package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="juandhv@rice.edu">Juan David Hernandez Vega</maintainer>
@@ -30,10 +30,10 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
 
-  <!-- Fetch -->
-  <depend>fetch_move_base_msgs</depend>
-  <depend>fetch_move_base_control</depend>
-  <depend>fetch_move_base_mapping</depend>
+  <!-- Pepper -->
+  <depend>pepper_move_base_msgs</depend>
+  <depend>pepper_move_base_control</depend>
+  <depend>pepper_move_base_mapping</depend>
 
   <!-- pedsim messages dependency -->
   <depend>pedsim_ros</depend>

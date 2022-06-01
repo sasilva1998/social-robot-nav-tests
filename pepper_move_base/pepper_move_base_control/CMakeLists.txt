@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(fetch_move_base_control)
+project(pepper_move_base_control)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   laser_geometry
   tf
   roslib
-  fetch_move_base_msgs
+  pepper_move_base_msgs
 )
 
 ## System dependencies are found with CMake's conventions

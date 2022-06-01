@@ -5,8 +5,8 @@
     <arg name="output" default="screen" />
 
     <!-- Start octomap_laser_scan node -->
-    <node name="fetch_move_base_planner" pkg="fetch_move_base_planning" type="fetch_move_base_planner" required="true" output="screen">
-        <rosparam command="load" file="$(find fetch_move_base_planning)/config/pepper_move_base_planning.yaml" />
+    <node name="pepper_move_base_planner" pkg="pepper_move_base_planning" type="pepper_move_base_planner" required="true" output="screen">
+        <rosparam command="load" file="$(find pepper_move_base_planning)/config/pepper_move_base_planning.yaml" />
     </node>
 
 </launch>

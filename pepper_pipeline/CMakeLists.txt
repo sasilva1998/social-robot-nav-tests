@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_eigen
   actionlib
   actionlib_msgs
-  fetch_move_base_msgs
+  pepper_move_base_msgs
   # mbf_msgs
   nav_msgs
   pedsim_msgs
@@ -42,7 +42,7 @@ endforeach()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES
-  CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib fetch_move_base_msgs
+  CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib pepper_move_base_msgs
   #mbf_msgs 
   nav_msgs
   # pedsim_msgs
@@ -63,8 +63,8 @@ include_directories(
 
 add_executable(odom_publisher src/odom_publisher.cpp)
 target_link_libraries(odom_publisher ${catkin_LIBRARIES})
-add_dependencies(odom_publisher ${catkin_EXPORTED_TARGETS} fetch_move_base_msgs_generate_messages_cpp ${fetch_move_base_msgs_EXPORTED_TARGETS})
+add_dependencies(odom_publisher ${catkin_EXPORTED_TARGETS} pepper_move_base_msgs_generate_messages_cpp ${pepper_move_base_msgs_EXPORTED_TARGETS})
 
 add_executable(collision_counter src/collision_counter.cpp)
 target_link_libraries(collision_counter ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${LIBFCL_LIBRARIES} ccd ${OCTOMAP_LIBRARIES} ${OMPL_LIBRARIES})
-add_dependencies(collision_counter ${catkin_EXPORTED_TARGETS} fetch_move_base_msgs_generate_messages_cpp ${fetch_move_base_msgs_EXPORTED_TARGETS})
+add_dependencies(collision_counter ${catkin_EXPORTED_TARGETS} pepper_move_base_msgs_generate_messages_cpp ${pepper_move_base_msgs_EXPORTED_TARGETS})

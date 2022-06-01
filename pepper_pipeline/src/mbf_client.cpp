@@ -5,7 +5,7 @@
 #include <actionlib/client/terminal_state.h>
 #include <actionlib_tutorials/FibonacciAction.h>
 #include <mbf_msgs/ExePathAction.h>
-#include <fetch_move_base_msgs/Path2D.h>
+#include <pepper_move_base_msgs/Path2D.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <nav_msgs/Path.h>
@@ -16,7 +16,7 @@
 // std_msgs::Float32 dist_tolerance = 0.2;
 // std_msgs::Float32 angle_tolerance = 0.2;
 
-void solutionPathCallback(const fetch_move_base_msgs::Path2D::ConstPtr &msg)
+void solutionPathCallback(const pepper_move_base_msgs::Path2D::ConstPtr &msg)
 {
     actionlib::SimpleActionClient<mbf_msgs::ExePathAction> ac("/move_base_flex/exe_path", true);
 
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n;
 
-    ros::Subscriber sub = n.subscribe("/fetch_move_base_planner/fetch_move_base_solution_path", 1000, solutionPathCallback);
+    ros::Subscriber sub = n.subscribe("/pepper_move_base_planner/pepper_move_base_solution_path", 1000, solutionPathCallback);
 
     ros::spin();
 

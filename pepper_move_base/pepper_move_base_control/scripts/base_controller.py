@@ -4,13 +4,13 @@ Created on November 1, 2018
 
 @author: juandhv (Juan David Hernandez Vega, juandhv@rice.edu)
 
-Purpose: Alternative Fetch base controller 
+Purpose: Alternative Pepper base controller 
 """
 
 # ROS imports
 import roslib
 
-roslib.load_manifest("fetch_move_base_control")
+roslib.load_manifest("pepper_move_base_control")
 import rospy
 import tf
 import tf2_ros
@@ -21,7 +21,7 @@ import numpy
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool
 from nav_msgs.msg import Odometry
-from fetch_move_base_msgs.msg import Path2D
+from pepper_move_base_msgs.msg import Path2D
 
 # Numpy
 import numpy as np
@@ -79,10 +79,10 @@ class Controller(object):
             "~control_active_topic", "control_active_topic"
         )
         self.xy_goal_tolerance_ = rospy.get_param(
-            "/fetch_move_base_planner/xy_goal_tolerance", 0.2
+            "/pepper_move_base_planner/xy_goal_tolerance", 0.2
         )
         self.yaw_goal_tolerance_ = rospy.get_param(
-            "/fetch_move_base_planner/yaw_goal_tolerance", 0.2
+            "/pepper_move_base_planner/yaw_goal_tolerance", 0.2
         )
 
         # =======================================================================
@@ -111,7 +111,7 @@ class Controller(object):
 
     def odomCallback(self, odometry_msg):
         """
-        Callback to Fetch's odometry data
+        Callback to Pepper's odometry data
         """
         self.current_position_[0] = odometry_msg.pose.pose.position.x
         self.current_position_[1] = odometry_msg.pose.pose.position.y
@@ -157,7 +157,7 @@ class Controller(object):
         print(min_list_index)
         current_waypoint_angle = float("inf")
         for i in min_list_index:
-            new_waypoint_angle = self.fetchAngleToPoint(
+            new_waypoint_angle = self.pepperAngleToPoint(
                 path_2d_msg.waypoints[i].x, path_2d_msg.waypoints[i].y
             )
             if new_waypoint_angle < current_waypoint_angle:
@@ -179,7 +179,7 @@ class Controller(object):
                 self.solution_path_wps_.append([waypoint.x, waypoint.y, waypoint.theta])
         return
 
-    def fetchAngleToPoint(self, x, y):
+    def pepperAngleToPoint(self, x, y):
 
         tetha_robot_waypoint = np.arctan2(
             y - self.current_position_[1], x - self.current_position_[0]
@@ -202,7 +202,7 @@ class Controller(object):
 
         return tetha_robot_waypoint
 
-    def controlBaseFetch(self):
+    def controlBasePepper(self):
         """Control loop"""
         loop_rate = rospy.Rate(self.controller_hz_)
         controller_state = 0
@@ -360,9 +360,9 @@ def wrapAngle(angle):
 
 
 if __name__ == "__main__":
-    rospy.init_node("fetch_move_base_control", log_level=rospy.INFO)
-    rospy.loginfo("%s: starting fetch_move_base controller", rospy.get_name())
+    rospy.init_node("pepper_move_base_control", log_level=rospy.INFO)
+    rospy.loginfo("%s: starting pepper_move_base controller", rospy.get_name())
 
     controller = Controller()
-    controller.controlBaseFetch()
+    controller.controlBasePepper()
     rospy.spin()

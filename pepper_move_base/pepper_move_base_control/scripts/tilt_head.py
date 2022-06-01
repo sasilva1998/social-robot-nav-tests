@@ -2,14 +2,14 @@
 """
 Created on November 1, 2018
 
-@author: Fetch robotics
+@author: Pepper robotics
 
 Purpose: Tilt head for navigation obstacle avoidance. 
 
 Modified by Juan D. Hernandez Vega (juandhv@rice.edu)
 """
 
-# Copyright (c) 2015 Fetch Robotics Inc.
+# Copyright (c) 2015 Pepper Robotics Inc.
 # Copyright (c) 2013-2014 Unbounded Robotics Inc.
 # All right reserved.
 #

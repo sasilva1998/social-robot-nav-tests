@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <include file="$(find fetch_move_base_planning)/launch/pepper_move_base_planning.launch" />
-    <!-- <include file="$(find fetch_move_base_mapping)/launch/pepper_move_base_mapping.launch" /> -->
-    <include file="$(find fetch_move_base_control)/launch/pepper_move_base_control.launch" />
+    <include file="$(find pepper_move_base_planning)/launch/pepper_move_base_planning.launch" />
+    <!-- <include file="$(find pepper_move_base_mapping)/launch/pepper_move_base_mapping.launch" /> -->
+    <include file="$(find pepper_move_base_control)/launch/pepper_move_base_control.launch" />
 </launch>

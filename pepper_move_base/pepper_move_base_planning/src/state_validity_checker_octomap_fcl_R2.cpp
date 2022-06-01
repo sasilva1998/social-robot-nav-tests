@@ -17,7 +17,7 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
                                                          const bool opport_collision_check,
                                                          std::vector<double> planning_bounds_x,
                                                          std::vector<double> planning_bounds_y)
-  : ob::StateValidityChecker(si), local_nh_("~"), fetch_base_radius_(0.4), fetch_base_height_(2.0)
+  : ob::StateValidityChecker(si), local_nh_("~"), pepper_base_radius_(0.4), pepper_base_height_(2.0)
 {
     GetOctomap::Request req;
     GetOctomap::Response resp;
@@ -26,8 +26,8 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
     planning_bounds_x_ = planning_bounds_x;
     planning_bounds_y_ = planning_bounds_y;
 
-    local_nh_.param("fetch_base_radius", fetch_base_radius_, fetch_base_radius_);
-    local_nh_.param("fetch_base_height", fetch_base_height_, fetch_base_height_);
+    local_nh_.param("pepper_base_radius", pepper_base_radius_, pepper_base_radius_);
+    local_nh_.param("pepper_base_height", pepper_base_height_, pepper_base_height_);
     local_nh_.param("octomap_service", octomap_service_, octomap_service_);
     local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
     local_nh_.param("odometry_topic", odometry_topic, odometry_topic);
@@ -55,9 +55,9 @@ OmFclStateValidityCheckerR2::OmFclStateValidityCheckerR2(const ob::SpaceInformat
             tree_obj_ = new fcl::CollisionObjectf((std::shared_ptr<fcl::CollisionGeometryf>(tree_)));
         }
 
-        fetch_collision_solid_.reset(new fcl::Cylinderf(fetch_base_radius_, fetch_base_height_));
+        pepper_collision_solid_.reset(new fcl::Cylinderf(pepper_base_radius_, pepper_base_height_));
 
-        agent_collision_solid_.reset(new fcl::Cylinderf(0.35, fetch_base_height_));
+        agent_collision_solid_.reset(new fcl::Cylinderf(0.35, pepper_base_height_));
 
         octree_res_ = octree_->getResolution();
         octree_->getMetricMin(octree_min_x_, octree_min_y_, octree_min_z_);
@@ -107,14 +107,14 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
     }
 
     // FCL
-    fcl::Transform3f fetch_tf;
-    fetch_tf.setIdentity();
-    fetch_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], fetch_base_height_ / 2.0));
+    fcl::Transform3f pepper_tf;
+    pepper_tf.setIdentity();
+    pepper_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], pepper_base_height_ / 2.0));
     // fcl::Quaternion3f qt0;
     // qt0.fromEuler(0.0, 0.0, 0.0);
-    // fetch_tf.setQuatRotation(qt0);
+    // pepper_tf.setQuatRotation(qt0);
 
-    fcl::CollisionObjectf vehicle_co(fetch_collision_solid_, fetch_tf);
+    fcl::CollisionObjectf vehicle_co(pepper_collision_solid_, pepper_tf);
 
     fcl::CollisionRequestf collision_request;
     fcl::CollisionResultf collision_result;
@@ -160,7 +160,7 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
                 fcl::Transform3f agent_tf;
                 agent_tf.setIdentity();
                 agent_tf.translate(fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y,
-                                                   fetch_base_height_ / 2.0));
+                                                   pepper_base_height_ / 2.0));
                 // fcl::Quaternion3f qt0;
                 // qt0.fromEuler(0.0, 0.0, 0.0);
                 // agent_tf.setQuatRotation(qt0);
@@ -180,7 +180,7 @@ bool OmFclStateValidityCheckerR2::isValid(const ob::State *state) const
             fcl::Transform3f agent_tf;
             agent_tf.setIdentity();
             agent_tf.translate(
-                fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, fetch_base_height_ / 2.0));
+                fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, pepper_base_height_ / 2.0));
             // fcl::Quaternion3f qt0;
             // qt0.fromEuler(0.0, 0.0, 0.0);
             // agent_tf.setQuatRotation(qt0);
@@ -223,7 +223,7 @@ double OmFclStateValidityCheckerR2::clearance(const ob::State *state) const
     // qt0.fromEuler(0.0, 0.0, 0.0);
     // vehicle_tf.setQuatRotation(qt0);
 
-    fcl::CollisionObjectf vehicle_co(fetch_collision_solid_, vehicle_tf);
+    fcl::CollisionObjectf vehicle_co(pepper_collision_solid_, vehicle_tf);
     fcl::DistanceRequestf distanceRequest;
     fcl::DistanceResultf distanceResult;
 
@@ -258,16 +258,16 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
     }
 
     // FCL
-    fcl::Transform3f fetch_tf;
-    fetch_tf.setIdentity();
-    fetch_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], 0.0));
+    fcl::Transform3f pepper_tf;
+    pepper_tf.setIdentity();
+    pepper_tf.translate(fcl::Vector3f(state_r2->values[0], state_r2->values[1], 0.0));
     // fcl::Quaternion3f qt0;
     // qt0.fromEuler(0.0, 0.0, 0.0);
-    // fetch_tf.setQuatRotation(qt0);
+    // pepper_tf.setQuatRotation(qt0);
 
-    std::shared_ptr<fcl::Cylinderf> cyl0(new fcl::Cylinderf(fetch_base_radius_ + 0.2, fetch_base_height_));
+    std::shared_ptr<fcl::Cylinderf> cyl0(new fcl::Cylinderf(pepper_base_radius_ + 0.2, pepper_base_height_));
 
-    fcl::CollisionObjectf cyl0_co(cyl0, fetch_tf);
+    fcl::CollisionObjectf cyl0_co(cyl0, pepper_tf);
     fcl::CollisionRequestf collision_request;
     fcl::CollisionResultf collision_result;
 
@@ -277,8 +277,8 @@ double OmFclStateValidityCheckerR2::checkRiskZones(const ob::State *state) const
         state_risk = 10.0;  // 15, 30
     else
     {
-        std::shared_ptr<fcl::Cylinderf> cyl1(new fcl::Cylinderf(fetch_base_radius_ + 0.4, fetch_base_height_));
-        fcl::CollisionObjectf cyl1_co(cyl1, fetch_tf);
+        std::shared_ptr<fcl::Cylinderf> cyl1(new fcl::Cylinderf(pepper_base_radius_ + 0.4, pepper_base_height_));
+        fcl::CollisionObjectf cyl1_co(cyl1, pepper_tf);
         collision_result.clear();
 
         fcl::collide(tree_obj_, &cyl1_co, collision_request, collision_result);

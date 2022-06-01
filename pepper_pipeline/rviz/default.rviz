@@ -73,8 +73,7 @@ Visualization Manager:
           Enabled: false
           Marker Topic: /pedsim_visualizer/walls
           Name: Walls
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 0
           Value: false
       Enabled: true
@@ -726,244 +725,137 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
-          agent_1:
-            {}
-          agent_10:
-            {}
-          agent_2:
-            {}
-          agent_3:
-            {}
-          agent_4:
-            {}
-          agent_5:
-            {}
-          agent_6:
-            {}
-          agent_7:
-            {}
-          agent_8:
-            {}
-          agent_9:
-            {}
-          cabinet1:
-            {}
-          cabinet2:
-            {}
-          cabinet3:
-            {}
-          column:
-            {}
-          door_00:
-            {}
-          door_01:
-            {}
-          map:
-            {}
+          agent_1: {}
+          agent_10: {}
+          agent_2: {}
+          agent_3: {}
+          agent_4: {}
+          agent_5: {}
+          agent_6: {}
+          agent_7: {}
+          agent_8: {}
+          agent_9: {}
+          cabinet1: {}
+          cabinet2: {}
+          cabinet3: {}
+          column: {}
+          door_00: {}
+          door_01: {}
+          map: {}
           odom:
             base_footprint:
               Tibia:
-                BumperB_frame:
-                  {}
-                BumperFL_frame:
-                  {}
-                BumperFR_frame:
-                  {}
-                ImuBaseAccelerometer_frame:
-                  {}
+                BumperB_frame: {}
+                BumperFL_frame: {}
+                BumperFR_frame: {}
+                ImuBaseAccelerometer_frame: {}
                 Pelvis:
                   Hip:
                     torso:
-                      ChestButton_frame:
-                        {}
-                      ImuTorsoAccelerometer_frame:
-                        {}
-                      ImuTorsoGyrometer_frame:
-                        {}
+                      ChestButton_frame: {}
+                      ImuTorsoAccelerometer_frame: {}
+                      ImuTorsoGyrometer_frame: {}
                       LShoulder:
                         LBicep:
                           LElbow:
                             LForeArm:
                               l_wrist:
-                                LHandTouchBack_frame:
-                                  {}
+                                LHandTouchBack_frame: {}
                       Neck:
                         Head:
                           CameraBottom_frame:
-                            CameraBottom_optical_frame:
-                              {}
+                            CameraBottom_optical_frame: {}
                           CameraDepth_frame:
-                            CameraDepth_optical_frame:
-                              {}
+                            CameraDepth_optical_frame: {}
                           CameraTop_frame:
-                            CameraTop_optical_frame:
-                              {}
-                          HeadTouchFront_frame:
-                            {}
-                          HeadTouchMiddle_frame:
-                            {}
-                          HeadTouchRear_frame:
-                            {}
-                          LSpeaker_frame:
-                            {}
-                          RSpeaker_frame:
-                            {}
+                            CameraTop_optical_frame: {}
+                          HeadTouchFront_frame: {}
+                          HeadTouchMiddle_frame: {}
+                          HeadTouchRear_frame: {}
+                          LSpeaker_frame: {}
+                          RSpeaker_frame: {}
                       RShoulder:
                         RBicep:
                           RElbow:
                             RForeArm:
                               r_wrist:
-                                RHandTouchBack_frame:
-                                  {}
-                      Tablet_frame:
-                        {}
-                      base_link:
-                        {}
-                ShovelLaser_frame:
-                  {}
-                SonarBack_frame:
-                  {}
-                SonarFront_frame:
-                  {}
-                SurroundingFrontLaser_device_frame:
-                  {}
-                SurroundingFrontLaser_fake_hokuyo_frame:
-                  {}
-                SurroundingFrontLaser_frame:
-                  {}
-                SurroundingLeftLaser_device_frame:
-                  {}
-                SurroundingLeftLaser_frame:
-                  {}
-                SurroundingRightLaser_device_frame:
-                  {}
-                SurroundingRightLaser_frame:
-                  {}
-                VerticalLeftLaser_frame:
-                  {}
-                VerticalRightLaser_frame:
-                  {}
+                                RHandTouchBack_frame: {}
+                      Tablet_frame: {}
+                      base_link: {}
+                ShovelLaser_frame: {}
+                SonarBack_frame: {}
+                SonarFront_frame: {}
+                SurroundingFrontLaser_device_frame: {}
+                SurroundingFrontLaser_fake_hokuyo_frame: {}
+                SurroundingFrontLaser_frame: {}
+                SurroundingLeftLaser_device_frame: {}
+                SurroundingLeftLaser_frame: {}
+                SurroundingRightLaser_device_frame: {}
+                SurroundingRightLaser_frame: {}
+                VerticalLeftLaser_frame: {}
+                VerticalRightLaser_frame: {}
           origin_landing:
-            door_E334:
-              {}
+            door_E334: {}
             origin_elevator:
-              elevator_button1:
-                {}
-              elevator_button2:
-                {}
-              elevator_left:
-                {}
-              elevator_left2:
-                {}
-              elevator_right:
-                {}
-              elevator_right2:
-                {}
-              wall_elv5:
-                {}
-              wall_elv6:
-                {}
-              wall_elv7:
-                {}
-              wall_elv8:
-                {}
-              wall_ext18:
-                {}
-              wall_ext19:
-                {}
-              wall_ext20:
-                {}
+              elevator_button1: {}
+              elevator_button2: {}
+              elevator_left: {}
+              elevator_left2: {}
+              elevator_right: {}
+              elevator_right2: {}
+              wall_elv5: {}
+              wall_elv6: {}
+              wall_elv7: {}
+              wall_elv8: {}
+              wall_ext18: {}
+              wall_ext19: {}
+              wall_ext20: {}
             origin_office:
-              boards_before_bedroom_link:
-                {}
-              wall_office_00:
-                {}
-              wall_office_01:
-                {}
-              wall_office_02:
-                {}
-              wall_office_03:
-                {}
-              wall_office_04:
-                {}
-              wall_office_05:
-                {}
-              wall_office_06:
-                {}
-              wall_office_07:
-                {}
-              wall_office_08:
-                {}
-              wall_office_09:
-                {}
-              wall_office_10:
-                {}
-            pillar_ext01:
-              {}
-            wall_ext10:
-              {}
-            wall_ext11:
-              {}
-            wall_ext12:
-              {}
-            wall_ext13:
-              {}
-            wall_ext14:
-              {}
-            wall_ext15:
-              {}
-            wall_ext16:
-              {}
-            wall_ext17:
-              {}
-            wall_ext21:
-              {}
-            wall_ext22:
-              {}
-            wall_ext23:
-              {}
-            wall_ext24:
-              {}
-            wall_ext25:
-              {}
-            wall_ext26:
-              {}
-            wall_ext3:
-              {}
-            wall_ext4:
-              {}
-            wall_ext5:
-              {}
-            wall_ext6:
-              {}
-            wall_ext8:
-              {}
-            wall_ext9:
-              {}
-          wall_00:
-            {}
-          wall_01_little_glas:
-            {}
-          wall_01_part1:
-            {}
-          wall_01_part2:
-            {}
-          wall_01_part3:
-            {}
-          wall_02:
-            {}
-          wall_03:
-            {}
-          wall_04:
-            {}
-          wall_05:
-            {}
-          wall_06:
-            {}
-          wall_07:
-            {}
-          wall_ipa:
-            {}
+              boards_before_bedroom_link: {}
+              wall_office_00: {}
+              wall_office_01: {}
+              wall_office_02: {}
+              wall_office_03: {}
+              wall_office_04: {}
+              wall_office_05: {}
+              wall_office_06: {}
+              wall_office_07: {}
+              wall_office_08: {}
+              wall_office_09: {}
+              wall_office_10: {}
+            pillar_ext01: {}
+            wall_ext10: {}
+            wall_ext11: {}
+            wall_ext12: {}
+            wall_ext13: {}
+            wall_ext14: {}
+            wall_ext15: {}
+            wall_ext16: {}
+            wall_ext17: {}
+            wall_ext21: {}
+            wall_ext22: {}
+            wall_ext23: {}
+            wall_ext24: {}
+            wall_ext25: {}
+            wall_ext26: {}
+            wall_ext3: {}
+            wall_ext4: {}
+            wall_ext5: {}
+            wall_ext6: {}
+            wall_ext8: {}
+            wall_ext9: {}
+          wall_00: {}
+          wall_01_little_glas: {}
+          wall_01_part1: {}
+          wall_01_part2: {}
+          wall_01_part3: {}
+          wall_02: {}
+          wall_03: {}
+          wall_04: {}
+          wall_05: {}
+          wall_06: {}
+          wall_07: {}
+          wall_ipa: {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -1014,7 +906,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /fetch_move_base_planner/solution_path
+      Marker Topic: /pepper_move_base_planner/solution_path
       Name: Marker
       Namespaces:
         online_planner_result_path: true

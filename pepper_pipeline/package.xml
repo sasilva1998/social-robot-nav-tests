@@ -46,10 +46,10 @@
   <depend>nav_msgs</depend>
   <depend>pedsim_ros</depend>
 
-  <!-- Fetch -->
-  <depend>fetch_move_base_msgs</depend>
-  <depend>fetch_move_base_control</depend>
-  <depend>fetch_move_base_mapping</depend>
+  <!-- Pepper -->
+  <depend>pepper_move_base_msgs</depend>
+  <depend>pepper_move_base_control</depend>
+  <depend>pepper_move_base_mapping</depend>
 
   <build_depend condition="$ROS_DISTRO != noetic">libfcl-dev</build_depend>
   <exec_depend condition="$ROS_DISTRO != noetic">libfcl-dev</exec_depend>

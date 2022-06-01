@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>fetch_move_base_msgs</name>
+  <name>pepper_move_base_msgs</name>
   <version>0.0.0</version>
-  <description>The fetch_move_base_msgs package</description>
+  <description>The pepper_move_base_msgs package</description>
 
   <maintainer email="juandhv@rice.edu">Juan David Hernandez Vega</maintainer>
 

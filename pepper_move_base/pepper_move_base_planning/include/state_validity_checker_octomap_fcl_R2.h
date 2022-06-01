@@ -168,7 +168,7 @@ private:
     double octree_min_x_, octree_min_y_, octree_min_z_;
     double octree_max_x_, octree_max_y_, octree_max_z_;
     std::vector<double> planning_bounds_x_, planning_bounds_y_;
-    double fetch_base_radius_, fetch_base_height_;
+    double pepper_base_radius_, pepper_base_height_;
     std::string octomap_service_;
 
     // cost objective type
@@ -186,7 +186,7 @@ private:
     // FCL
     fcl::OcTreef *tree_;
     fcl::CollisionObjectf *tree_obj_;
-    std::shared_ptr<fcl::Cylinderf> fetch_collision_solid_;
+    std::shared_ptr<fcl::Cylinderf> pepper_collision_solid_;
     std::shared_ptr<fcl::Cylinderf> agent_collision_solid_;
 
     bool opport_collision_check_;

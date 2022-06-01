@@ -55,10 +55,10 @@
 #include <state_cost_objective.h>
 #include <state_validity_checker_octomap_fcl_R2.h>
 
-// Fetch base controller
-#include <fetch_move_base_msgs/Path2D.h>
-#include <fetch_move_base_msgs/Goto2DAction.h>
-#include <fetch_move_base_msgs/GotoRegion2DAction.h>
+// Pepper base controller
+#include <pepper_move_base_msgs/Path2D.h>
+#include <pepper_move_base_msgs/Goto2DAction.h>
+#include <pepper_move_base_msgs/GotoRegion2DAction.h>
 
 // pedsim msgs
 #include <pedsim_msgs/AgentStates.h>
@@ -67,9 +67,9 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
-typedef actionlib::SimpleActionServer<fetch_move_base_msgs::Goto2DAction> FetchBaseGoToActionServer;
-typedef actionlib::SimpleActionServer<fetch_move_base_msgs::GotoRegion2DAction>
-    FetchBaseGoToRegionActionServer;
+typedef actionlib::SimpleActionServer<pepper_move_base_msgs::Goto2DAction> PepperBaseGoToActionServer;
+typedef actionlib::SimpleActionServer<pepper_move_base_msgs::GotoRegion2DAction>
+    PepperBaseGoToRegionActionServer;
 
 //!  OnlinePlannFramework class.
 /*!
@@ -92,12 +92,12 @@ public:
     //! Callback for getting the 2D navigation goal
     void queryGoalCallback(const geometry_msgs::PoseStampedConstPtr &nav_goal_msg);
     //! Callback for getting the 2D navigation goal
-    void goToActionCallback(const fetch_move_base_msgs::Goto2DGoalConstPtr &goto_req);
+    void goToActionCallback(const pepper_move_base_msgs::Goto2DGoalConstPtr &goto_req);
     //! Callback for getting the 2D navigation goal region
-    void goToRegionActionCallback(const fetch_move_base_msgs::GotoRegion2DGoalConstPtr &goto_region_req);
+    void goToRegionActionCallback(const pepper_move_base_msgs::GotoRegion2DGoalConstPtr &goto_region_req);
     //! Procedure to visualize the resulting path
     void visualizeRRT(og::PathGeometric &geopath);
-    //! Callback for getting the state of the Fetch base controller.
+    //! Callback for getting the state of the Pepper base controller.
     void controlActiveCallback(const std_msgs::BoolConstPtr &control_active_msg);
 
 private:
@@ -109,23 +109,23 @@ private:
         query_goal_radius_rviz_pub_;
 
     // ROS action server
-    FetchBaseGoToActionServer *goto_action_server_;
+    PepperBaseGoToActionServer *goto_action_server_;
     std::string goto_action_;
-    fetch_move_base_msgs::Goto2DAction goto_action_feedback_;
-    fetch_move_base_msgs::Goto2DAction goto_action_result_;
+    pepper_move_base_msgs::Goto2DAction goto_action_feedback_;
+    pepper_move_base_msgs::Goto2DAction goto_action_result_;
 
-    FetchBaseGoToRegionActionServer *goto_region_action_server_;
+    PepperBaseGoToRegionActionServer *goto_region_action_server_;
     std::string goto_region_action_;
-    fetch_move_base_msgs::GotoRegion2DAction goto_region_action_feedback_;
-    fetch_move_base_msgs::GotoRegion2DAction goto_region_action_result_;
+    pepper_move_base_msgs::GotoRegion2DAction goto_region_action_feedback_;
+    pepper_move_base_msgs::GotoRegion2DAction goto_region_action_result_;
 
     // ROS TF
-    tf::Pose last_fetch_pose_;
+    tf::Pose last_pepper_pose_;
     tf::TransformListener tf_listener_;
 
     // OMPL, online planner
     og::SimpleSetupPtr simple_setup_;
-    double timer_period_, solving_time_, xy_goal_tolerance_, yaw_goal_tolerance_, fetch_base_radius;
+    double timer_period_, solving_time_, xy_goal_tolerance_, yaw_goal_tolerance_, pepper_base_radius;
     bool opport_collision_check_, reuse_last_best_solution_, motion_cost_interpolation_, odom_available_,
         goal_available_, goal_region_available_, dynamic_bounds_, start_prev_path_proj_, visualize_tree_,
         control_active_;
@@ -182,7 +182,7 @@ OnlinePlannFramework::OnlinePlannFramework()
     local_nh_.param("yaw_goal_tolerance", yaw_goal_tolerance_, 0.1);
     local_nh_.param("visualize_tree", visualize_tree_, false);
     local_nh_.param("sim_agents_topic", sim_agents_topic, sim_agents_topic);
-    local_nh_.param("fetch_base_radius", fetch_base_radius, fetch_base_radius);
+    local_nh_.param("pepper_base_radius", pepper_base_radius, pepper_base_radius);
 
     goal_radius_ = xy_goal_tolerance_;
     goal_available_ = false;
@@ -207,7 +207,7 @@ OnlinePlannFramework::OnlinePlannFramework()
     //=======================================================================
     solution_path_rviz_pub_ = local_nh_.advertise<visualization_msgs::Marker>("solution_path", 1, true);
     solution_path_control_pub_ =
-        local_nh_.advertise<fetch_move_base_msgs::Path2D>("fetch_move_base_solution_path", 1, true);
+        local_nh_.advertise<pepper_move_base_msgs::Path2D>("pepper_move_base_solution_path", 1, true);
     query_goal_pose_rviz_pub_ =
         local_nh_.advertise<geometry_msgs::PoseStamped>("query_goal_pose_rviz", 1, true);
     query_goal_radius_rviz_pub_ =
@@ -216,10 +216,10 @@ OnlinePlannFramework::OnlinePlannFramework()
     //=======================================================================
     // Action server
     //=======================================================================
-    goto_action_server_ = new FetchBaseGoToActionServer(
+    goto_action_server_ = new PepperBaseGoToActionServer(
         ros::NodeHandle(), goto_action_, boost::bind(&OnlinePlannFramework::goToActionCallback, this, _1),
         false);
-    goto_region_action_server_ = new FetchBaseGoToRegionActionServer(
+    goto_region_action_server_ = new PepperBaseGoToRegionActionServer(
         ros::NodeHandle(), goto_region_action_,
         boost::bind(&OnlinePlannFramework::goToRegionActionCallback, this, _1), false);
 
@@ -243,7 +243,7 @@ OnlinePlannFramework::OnlinePlannFramework()
 /*!
  * Callback for getting the 2D navigation goal
  */
-void OnlinePlannFramework::goToActionCallback(const fetch_move_base_msgs::Goto2DGoalConstPtr &goto_req)
+void OnlinePlannFramework::goToActionCallback(const pepper_move_base_msgs::Goto2DGoalConstPtr &goto_req)
 {
     goal_map_frame_[0] = goto_req->goal.x;
     goal_map_frame_[1] = goto_req->goal.y;
@@ -309,10 +309,10 @@ void OnlinePlannFramework::goToActionCallback(const fetch_move_base_msgs::Goto2D
     std_srvs::Empty::Response resp;
 
     // ! COMMENTED TO AVOID UNNEEDED PROCESSING
-    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // while (nh_.ok() && !ros::service::call("/pepper_move_base_mapper/clean_merge_octomap", req, resp))  //
     // {
     //     ROS_WARN("Request to %s failed; trying again...",
-    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //              nh_.resolveName("/pepper_move_base_mapper/clean_merge_octomap").c_str());
     //     usleep(1000000);
     // }
     solution_path_states_.clear();
@@ -322,7 +322,7 @@ void OnlinePlannFramework::goToActionCallback(const fetch_move_base_msgs::Goto2D
     while (ros::ok() && (goal_available_ || control_active_))
         loop_rate.sleep();
 
-    fetch_move_base_msgs::Goto2DResult result;
+    pepper_move_base_msgs::Goto2DResult result;
     result.success = true;
 
     goto_action_server_->setSucceeded(result);
@@ -333,7 +333,7 @@ void OnlinePlannFramework::goToActionCallback(const fetch_move_base_msgs::Goto2D
  * Callback for getting the 2D navigation goal region
  */
 void OnlinePlannFramework::goToRegionActionCallback(
-    const fetch_move_base_msgs::GotoRegion2DGoalConstPtr &goto_region_req)
+    const pepper_move_base_msgs::GotoRegion2DGoalConstPtr &goto_region_req)
 {
     goal_map_frame_[0] = goto_region_req->goal.x;
     goal_map_frame_[1] = goto_region_req->goal.y;
@@ -386,11 +386,11 @@ void OnlinePlannFramework::goToRegionActionCallback(
     std_srvs::Empty::Request req;
     std_srvs::Empty::Response resp;
     // ! COMMENTED TO AVOID UNNEEDED PROCESSING
-    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // while (nh_.ok() && !ros::service::call("/pepper_move_base_mapper/clean_merge_octomap", req, resp))  //
     // TODO
     // {
     //     ROS_WARN("Request to %s failed; trying again...",
-    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //              nh_.resolveName("/pepper_move_base_mapper/clean_merge_octomap").c_str());
     //     usleep(1000000);
     // }
     solution_path_states_.clear();
@@ -400,7 +400,7 @@ void OnlinePlannFramework::goToRegionActionCallback(
     while (ros::ok() && (goal_region_available_ || control_active_))
         loop_rate.sleep();
 
-    fetch_move_base_msgs::GotoRegion2DResult result;
+    pepper_move_base_msgs::GotoRegion2DResult result;
     result.success = true;
 
     goto_region_action_server_->setSucceeded(result);
@@ -414,14 +414,14 @@ void OnlinePlannFramework::odomCallback(const nav_msgs::OdometryConstPtr &odom_m
 {
     if (!odom_available_)
         odom_available_ = true;
-    tf::poseMsgToTF(odom_msg->pose.pose, last_fetch_pose_);
+    tf::poseMsgToTF(odom_msg->pose.pose, last_pepper_pose_);
 
     double useless_pitch, useless_roll, yaw;
-    last_fetch_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+    last_pepper_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
 
     if ((goal_available_ || goal_region_available_) &&
-        sqrt(pow(goal_odom_frame_[0] - last_fetch_pose_.getOrigin().getX(), 2.0) +
-             pow(goal_odom_frame_[1] - last_fetch_pose_.getOrigin().getY(), 2.0)) < (goal_radius_ + 0.1))
+        sqrt(pow(goal_odom_frame_[0] - last_pepper_pose_.getOrigin().getX(), 2.0) +
+             pow(goal_odom_frame_[1] - last_pepper_pose_.getOrigin().getY(), 2.0)) < (goal_radius_ + 0.1))
     {
         goal_available_ = false;
         goal_region_available_ = false;
@@ -430,7 +430,7 @@ void OnlinePlannFramework::odomCallback(const nav_msgs::OdometryConstPtr &odom_m
 
 //! Control active callback.
 /*!
- * Callback for getting the state of the Fetch base controller
+ * Callback for getting the state of the Pepper base controller
  */
 void OnlinePlannFramework::controlActiveCallback(const std_msgs::BoolConstPtr &control_active_msg)
 {
@@ -473,11 +473,11 @@ void OnlinePlannFramework::queryGoalCallback(const geometry_msgs::PoseStampedCon
     std_srvs::Empty::Request req;
     std_srvs::Empty::Response resp;
     // ! COMMENTED TO AVOID UNNEEDED PROCESSING
-    // while (nh_.ok() && !ros::service::call("/fetch_move_base_mapper/clean_merge_octomap", req, resp))  //
+    // while (nh_.ok() && !ros::service::call("/pepper_move_base_mapper/clean_merge_octomap", req, resp))  //
     // TODO
     // {
     //     ROS_WARN("Request to %s failed; trying again...",
-    //              nh_.resolveName("/fetch_move_base_mapper/clean_merge_octomap").c_str());
+    //              nh_.resolveName("/pepper_move_base_mapper/clean_merge_octomap").c_str());
     //     usleep(1000000);
     // }
     solution_path_states_.clear();
@@ -559,9 +559,9 @@ void OnlinePlannFramework::planWithSimpleSetup()
     // Create a start and goal states
     //=======================================================================
     double useless_pitch, useless_roll, yaw;
-    last_fetch_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
-    start_state_[0] = double(last_fetch_pose_.getOrigin().getX());  // x
-    start_state_[1] = double(last_fetch_pose_.getOrigin().getY());  // y
+    last_pepper_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+    start_state_[0] = double(last_pepper_pose_.getOrigin().getX());  // x
+    start_state_[1] = double(last_pepper_pose_.getOrigin().getY());  // y
 
     // create a start state
     ob::ScopedState<> start(space);
@@ -681,12 +681,12 @@ void OnlinePlannFramework::planningTimerCallback()
             //=======================================================================
             ob::RealVectorBounds bounds(2);
 
-            if (last_fetch_pose_.getOrigin().getX() < goal_odom_frame_[0])
+            if (last_pepper_pose_.getOrigin().getX() < goal_odom_frame_[0])
             {
-                if (last_fetch_pose_.getOrigin().getX() - 10.0 < planning_bounds_x_[0])
+                if (last_pepper_pose_.getOrigin().getX() - 10.0 < planning_bounds_x_[0])
                     bounds.setLow(0, planning_bounds_x_[0]);
                 else
-                    bounds.setLow(0, last_fetch_pose_.getOrigin().getX() - 10.0);
+                    bounds.setLow(0, last_pepper_pose_.getOrigin().getX() - 10.0);
 
                 if (goal_odom_frame_[0] + 5.0 > planning_bounds_x_[1])
                     bounds.setHigh(0, planning_bounds_x_[1]);
@@ -695,10 +695,10 @@ void OnlinePlannFramework::planningTimerCallback()
             }
             else
             {
-                if (last_fetch_pose_.getOrigin().getX() + 10.0 > planning_bounds_x_[1])
+                if (last_pepper_pose_.getOrigin().getX() + 10.0 > planning_bounds_x_[1])
                     bounds.setHigh(0, planning_bounds_x_[1]);
                 else
-                    bounds.setHigh(0, last_fetch_pose_.getOrigin().getX() + 10.0);
+                    bounds.setHigh(0, last_pepper_pose_.getOrigin().getX() + 10.0);
 
                 if (goal_odom_frame_[0] - 10.0 < planning_bounds_x_[0])
                     bounds.setLow(0, planning_bounds_x_[0]);
@@ -706,12 +706,12 @@ void OnlinePlannFramework::planningTimerCallback()
                     bounds.setLow(0, goal_odom_frame_[0] - 10.0);
             }
 
-            if (last_fetch_pose_.getOrigin().getY() < goal_odom_frame_[1])
+            if (last_pepper_pose_.getOrigin().getY() < goal_odom_frame_[1])
             {
-                if (last_fetch_pose_.getOrigin().getY() - 10.0 < planning_bounds_y_[0])
+                if (last_pepper_pose_.getOrigin().getY() - 10.0 < planning_bounds_y_[0])
                     bounds.setLow(1, planning_bounds_y_[0]);
                 else
-                    bounds.setLow(1, last_fetch_pose_.getOrigin().getY() - 10.0);
+                    bounds.setLow(1, last_pepper_pose_.getOrigin().getY() - 10.0);
 
                 if (goal_odom_frame_[1] + 10.0 > planning_bounds_y_[1])
                     bounds.setHigh(1, planning_bounds_y_[1]);
@@ -720,10 +720,10 @@ void OnlinePlannFramework::planningTimerCallback()
             }
             else
             {
-                if (last_fetch_pose_.getOrigin().getY() + 10.0 > planning_bounds_y_[1])
+                if (last_pepper_pose_.getOrigin().getY() + 10.0 > planning_bounds_y_[1])
                     bounds.setHigh(1, planning_bounds_y_[1]);
                 else
-                    bounds.setHigh(1, last_fetch_pose_.getOrigin().getY() + 10.0);
+                    bounds.setHigh(1, last_pepper_pose_.getOrigin().getY() + 10.0);
 
                 if (goal_odom_frame_[1] - 10.0 < planning_bounds_y_[0])
                     bounds.setLow(1, planning_bounds_y_[0]);
@@ -740,10 +740,10 @@ void OnlinePlannFramework::planningTimerCallback()
         ob::ScopedState<> start(simple_setup_->getSpaceInformation()->getStateSpace());
         ob::ScopedState<> goal(simple_setup_->getSpaceInformation()->getStateSpace());
 
-        last_fetch_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
+        last_pepper_pose_.getBasis().getEulerYPR(yaw, useless_pitch, useless_roll);
 
-        start[0] = double(last_fetch_pose_.getOrigin().getX());  // x
-        start[1] = double(last_fetch_pose_.getOrigin().getY());  // y
+        start[0] = double(last_pepper_pose_.getOrigin().getX());  // x
+        start[1] = double(last_pepper_pose_.getOrigin().getY());  // y
 
         //        if (!simple_setup_->getStateValidityChecker()->isValid(start->as<ob::State>()))
         //        {
@@ -854,7 +854,7 @@ void OnlinePlannFramework::planningTimerCallback()
                 //=======================================================================
                 if (path_states.size() > 0)
                 {
-                    fetch_move_base_msgs::Path2D solution_path_for_control;
+                    pepper_move_base_msgs::Path2D solution_path_for_control;
                     for (unsigned int i = 0; i < path_states.size(); i++)
                     {
                         geometry_msgs::Pose2D p;
@@ -903,7 +903,7 @@ void OnlinePlannFramework::planningTimerCallback()
 
                 std::reverse(solution_path_states_copy_.begin(), solution_path_states_copy_.end());
                 ROS_INFO("%s:\n\tsending partial last possible path\n", ros::this_node::getName().c_str());
-                fetch_move_base_msgs::Path2D solution_path_for_control;
+                pepper_move_base_msgs::Path2D solution_path_for_control;
                 og::PathGeometric path_visualize = og::PathGeometric(simple_setup_->getSpaceInformation());
 
                 // adding first waypoint
@@ -1004,11 +1004,11 @@ void OnlinePlannFramework::planningTimerCallback()
                             posEv[0] = double(solution_path_states_copy_[i]
                                                   ->as<ob::RealVectorStateSpace::StateType>()
                                                   ->values[0] +
-                                              counter * fetch_base_radius * std::cos(angle));  // x
+                                              counter * pepper_base_radius * std::cos(angle));  // x
                             posEv[1] = double(solution_path_states_copy_[i]
                                                   ->as<ob::RealVectorStateSpace::StateType>()
                                                   ->values[1] +
-                                              counter * fetch_base_radius * std::sin(angle));  // y
+                                              counter * pepper_base_radius * std::sin(angle));  // y
 
                             if (!simple_setup_->getSpaceInformation()->checkMotion(
                                     solution_path_states_copy_[i], posEv->as<ob::State>()))
@@ -1019,11 +1019,11 @@ void OnlinePlannFramework::planningTimerCallback()
                                 posEv[0] = double(solution_path_states_copy_[i]
                                                       ->as<ob::RealVectorStateSpace::StateType>()
                                                       ->values[0] +
-                                                  (counter - 1) * fetch_base_radius * std::cos(angle));  // x
+                                                  (counter - 1) * pepper_base_radius * std::cos(angle));  // x
                                 posEv[1] = double(solution_path_states_copy_[i]
                                                       ->as<ob::RealVectorStateSpace::StateType>()
                                                       ->values[1] +
-                                                  (counter - 1) * fetch_base_radius * std::sin(angle));
+                                                  (counter - 1) * pepper_base_radius * std::sin(angle));
 
                                 geometry_msgs::Pose2D p;
                                 p.x = posEv[0];
@@ -1070,7 +1070,7 @@ void OnlinePlannFramework::planningTimerCallback()
         if ((abs(goal_odom_frame_[0] - odomData->pose.pose.position.x) < (xy_goal_tolerance_ * 2)) &
             (abs(goal_odom_frame_[1] - odomData->pose.pose.position.y) < (xy_goal_tolerance_ * 2)))
         {
-            fetch_move_base_msgs::Goto2DResult result;
+            pepper_move_base_msgs::Goto2DResult result;
             result.success = true;
             goto_action_server_->setSucceeded(result);
         }
@@ -1183,7 +1183,7 @@ void OnlinePlannFramework::visualizeRRT(og::PathGeometric &geopath)
 //! Main function
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "fetch_move_base_planner");
+    ros::init(argc, argv, "pepper_move_base_planner");
 
     ROS_INFO("%s:\n\toonline planner (C++), using OMPL version %s\n", ros::this_node::getName().c_str(),
              OMPL_VERSION);

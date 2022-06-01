@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>fetch_move_base_mapping</name>
+  <name>pepper_move_base_mapping</name>
   <version>0.0.0</version>
   <description>Octomap laser scan package</description>
 
