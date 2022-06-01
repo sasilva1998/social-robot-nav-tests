@@ -44,7 +44,8 @@ catkin_package(
 #  LIBRARIES
   CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib fetch_move_base_msgs
   #mbf_msgs 
-  nav_msgs pedsim_msgs
+  nav_msgs
+  # pedsim_msgs
   # DEPENDS OMPL
 )
 
