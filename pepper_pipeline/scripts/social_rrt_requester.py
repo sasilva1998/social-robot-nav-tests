@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import rospy
 import actionlib
@@ -20,8 +20,8 @@ def social_rrt_client():
     # Creates a goal to send to the action server.
     goal = Goto2DGoal()
 
-    goal.goal.x = 3
-    goal.goal.y = -3
+    goal.goal.x = -12
+    goal.goal.y = 12
 
     # Sends the goal to the action server.
     client.send_goal(goal)

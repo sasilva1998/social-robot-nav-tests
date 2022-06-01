@@ -16,15 +16,13 @@
 #include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
 #include <fcl/broadphase/default_broadphase_callbacks.h>
 #include <fcl/broadphase/broadphase_spatialhash.h>
-
-#include "fcl/common/types.h"
-#include "fcl/config.h"
-#include "fcl/geometry/shape/cylinder.h"
-#include "fcl/math/geometry-inl.h"
-
-#include "fcl/narrowphase/collision_object.h"
-#include "fcl/narrowphase/collision_request.h"
-#include "fcl/narrowphase/collision_result.h"
+#include <fcl/common/types.h>
+#include <fcl/config.h>
+#include <fcl/geometry/shape/cylinder.h>
+#include <fcl/math/geometry-inl.h>
+#include <fcl/narrowphase/collision_object.h>
+#include <fcl/narrowphase/collision_request.h>
+#include <fcl/narrowphase/collision_result.h>
 
 #include <nav_msgs/Odometry.h>
 #include <pedsim_msgs/AgentStates.h>
