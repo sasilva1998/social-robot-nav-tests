@@ -44,7 +44,7 @@
   <!-- msgs -->
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>pedsim_msgs</depend>
+  <depend>pedsim_ros</depend>
 
   <!-- Fetch -->
   <depend>fetch_move_base_msgs</depend>
