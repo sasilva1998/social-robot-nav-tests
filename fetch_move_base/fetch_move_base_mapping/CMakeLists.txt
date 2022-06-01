@@ -120,7 +120,8 @@ find_package(PCL REQUIRED QUIET COMPONENTS common sample_consensus io segmentati
 catkin_package(
 #  INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS ${PACKAGE_DEPENDENCIES} pedsim_msgs
+  CATKIN_DEPENDS ${PACKAGE_DEPENDENCIES} 
+  # pedsim_msgs
   DEPENDS octomap PCL
 )
 

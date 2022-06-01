@@ -123,7 +123,8 @@ set(LIBFCL_LIBRARIES "${LIBFCL_LIBRARIES_FULL}")
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES
-  CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib fetch_move_base_msgs pedsim_msgs
+  CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib fetch_move_base_msgs 
+  # pedsim_msgs
   DEPENDS OMPL
 )
 
