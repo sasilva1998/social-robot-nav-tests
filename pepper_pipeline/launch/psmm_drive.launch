@@ -10,4 +10,7 @@
         <param name="omni_drive" value="false" />
     </node>
 
+    <node pkg="hrvo_node" type="hrvo_compact.py" name="hrvo_node" output="screen">
+    </node>
+
 </launch>

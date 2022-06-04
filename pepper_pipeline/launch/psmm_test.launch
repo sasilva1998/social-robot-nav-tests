@@ -13,7 +13,7 @@
 
     <include file="$(find cpu_monitor)/launch/cpu_monitor.launch" />
 
-    <node pkg="pepper_pipeline" type="sfm_requester.py" name="sfm_requester" />
+    <node pkg="pepper_pipeline" type="psmm_requester.py" name="psmm_requester" />
 
     <node pkg="pepper_pipeline" type="collision_counter" name="collision_counter" />
 

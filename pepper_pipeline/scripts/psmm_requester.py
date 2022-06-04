@@ -3,20 +3,20 @@
 import rospy
 import actionlib
 import time
-from sfm_diff_drive.msg import SFMDriveAction, SFMDriveGoal
+from psmm_drive.msg import PSMMDriveAction, PSMMDriveGoal
+from nav_msgs.msg import OccupancyGrid
 
-
-def sfm_drive_client():
+def psmm_drive_client():
 
     time.sleep(10)
-    client = actionlib.SimpleActionClient("sfm_drive_node", SFMDriveAction)
+    client = actionlib.SimpleActionClient("psmm_drive_node", PSMMDriveAction)
 
     # Waits until the action server has started up and started
     # listening for goals.
     client.wait_for_server()
 
     # Creates a goal to send to the action server.
-    goal = SFMDriveGoal()
+    goal = PSMMDriveGoal()
 
     goal.goal.x = -12.0
     goal.goal.y = 12.5
@@ -35,7 +35,8 @@ if __name__ == "__main__":
     try:
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
-        rospy.init_node("sfm_drive_client_py")
-        result = sfm_drive_client()
+        rospy.init_node("psmm_drive_client_py")
+        rospy.wait_for_message("/projected_map", OccupancyGrid)
+        result = psmm_drive_client()
     except rospy.ROSInterruptException:
         print("program interrupted before completion")
