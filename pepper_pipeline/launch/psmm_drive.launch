@@ -2,15 +2,15 @@
 
     <node pkg="psmm_drive" type="psmm_drive_server.py" name="psmm_drive_node" output="screen">
         <param name="force_desired" value="10" />
-        <param name="force_obstacle" value="10" />
-        <param name="force_social" value="35" />
+        <param name="force_obstacle" value="5" />
+        <param name="force_social" value="10" />
         <param name="cmd_vel_topic" value="/pepper/cmd_vel" />
         <param name="max_vel" value="0.35" />
         <param name="max_vel_turn" value="0.7" />
         <param name="omni_drive" value="false" />
     </node>
 
-    <node pkg="hrvo_node" type="hrvo_compact.py" name="hrvo_node" output="screen">
+    <node pkg="psmm_drive" type="hrvo_compact.py" name="hrvo_node" output="screen">
     </node>
 
 </launch>

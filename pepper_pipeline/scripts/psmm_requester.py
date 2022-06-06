@@ -5,10 +5,11 @@ import actionlib
 import time
 from psmm_drive.msg import PSMMDriveAction, PSMMDriveGoal
 from nav_msgs.msg import OccupancyGrid
+from sensor_msgs.msg import PointCloud2
 
 def psmm_drive_client():
 
-    time.sleep(10)
+    # time.sleep(10)
     client = actionlib.SimpleActionClient("psmm_drive_node", PSMMDriveAction)
 
     # Waits until the action server has started up and started
@@ -18,8 +19,8 @@ def psmm_drive_client():
     # Creates a goal to send to the action server.
     goal = PSMMDriveGoal()
 
-    goal.goal.x = -12.0
-    goal.goal.y = 12.5
+    goal.goal.x = 2
+    goal.goal.y = -7.5
 
     # Sends the goal to the action server.
     client.send_goal(goal)
@@ -36,7 +37,8 @@ if __name__ == "__main__":
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
         rospy.init_node("psmm_drive_client_py")
-        rospy.wait_for_message("/projected_map", OccupancyGrid)
+        time.sleep(10)
+        rospy.wait_for_message("/pepper/camera/depth/points", PointCloud2)
         result = psmm_drive_client()
     except rospy.ROSInterruptException:
         print("program interrupted before completion")
