@@ -3,6 +3,6 @@
 #include <actionlib/client/terminal_state.h>
 #include <actionlib_tutorials/FibonacciAction.h>
 
-#include <pepper_move_base_msgs/Path2D.h>
+#include <esc_move_base_msgs/Path2D.h>
 
-void solutionPathCallback(const pepper_move_base_msgs::Path2D::ConstPtr &msg);
+void solutionPathCallback(const esc_move_base_msgs::Path2D::ConstPtr &msg);

@@ -47,9 +47,9 @@
   <depend>pedsim_ros</depend>
 
   <!-- Pepper -->
-  <depend>pepper_move_base_msgs</depend>
-  <depend>pepper_move_base_control</depend>
-  <depend>pepper_move_base_mapping</depend>
+  <depend>esc_move_base_msgs</depend>
+  <depend>esc_move_base_control</depend>
+  <depend>esc_move_base_mapping</depend>
 
   <build_depend condition="$ROS_DISTRO != noetic">libfcl-dev</build_depend>
   <exec_depend condition="$ROS_DISTRO != noetic">libfcl-dev</exec_depend>

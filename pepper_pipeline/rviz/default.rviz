@@ -906,7 +906,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /pepper_move_base_planner/solution_path
+      Marker Topic: /esc_move_base_planner/solution_path
       Name: Marker
       Namespaces:
         online_planner_result_path: true

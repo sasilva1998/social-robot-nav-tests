@@ -126,7 +126,7 @@
         <node pkg="pepper_pipeline" type="odom_publisher" name="odom_publisher" />
 
         <!-- to use own Juan controller -->
-        <!-- <include file="$(find pepper_move_base_control)/launch/pepper_move_base_control.launch" /> -->
+        <!-- <include file="$(find esc_move_base_control)/launch/esc_move_base_control.launch" /> -->
 
 
         <group if="$(arg online)">
@@ -205,9 +205,9 @@
             <param name="recovery_alpha_fast" value="0.0" />
         </node> -->
 
-        <!-- <include file="$(find pepper_move_base_planning)/launch/pepper_move_base_planning.launch" /> -->
-        <!-- <include file="$(find pepper_move_base_mapping)/launch/pepper_move_base_mapping.launch" /> -->
-        <!-- <include file="$(find pepper_move_base_control)/launch/pepper_move_base_control.launch" /> -->
+        <!-- <include file="$(find esc_move_base_planning)/launch/esc_move_base_planning.launch" /> -->
+        <!-- <include file="$(find esc_move_base_mapping)/launch/esc_move_base_mapping.launch" /> -->
+        <!-- <include file="$(find esc_move_base_control)/launch/esc_move_base_control.launch" /> -->
 
         <!-- Not using Cartographer because of an odom shifting problem -->
         <!-- cartographer_node -->

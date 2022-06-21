@@ -1,7 +1,7 @@
 import time
 import roslaunch
 import rospy
-from pepper_move_base_msgs.msg import Goto2DActionResult
+from esc_move_base_msgs.msg import Goto2DActionResult
 
 PROCESS_GENERATE_RUNNING = True
 

@@ -5,7 +5,7 @@ import actionlib
 import time
 
 # from sfm_diff_drive.msg import SFMDriveAction, SFMDriveGoal
-from pepper_move_base_msgs.msg import Goto2DAction, Goto2DGoal
+from esc_move_base_msgs.msg import Goto2DAction, Goto2DGoal
 
 
 def social_rrt_client():

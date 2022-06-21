@@ -8,7 +8,7 @@ from std_msgs.msg import Float64, Float32, Int32
 import numpy as np
 import time
 from sfm_diff_drive.msg import SFMDriveActionResult, SFMDriveActionFeedback
-from pepper_move_base_msgs.msg import Goto2DActionGoal, Goto2DActionResult
+from esc_move_base_msgs.msg import Goto2DActionGoal, Goto2DActionResult
 
 
 def import_csv(csvfilename):
@@ -171,7 +171,7 @@ class MetricsRecorder:
         )
 
         rospy.Subscriber(
-            "/cpu_monitor/pepper_move_base_planner/cpu",
+            "/cpu_monitor/esc_move_base_planner/cpu",
             Float32,
             self.cpu_callback,
             queue_size=1,
