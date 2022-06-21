@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(pepper_social_nav_tests)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++14)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -20,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   esc_move_base_msgs
-  # mbf_msgs
+  #mbf_msgs
   nav_msgs
   pedsim_msgs
 )
@@ -29,14 +29,10 @@ find_package(ompl REQUIRED)
 find_package(Octomap REQUIRED)
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBFCL_PC REQUIRED fcl)
-# find absolute paths to LIBFCL_* paths
-find_path(LIBFCL_INCLUDE_DIRS fcl/config.h HINTS ${LIBFCL_PC_INCLUDE_DIR} ${LIBFCL_PC_INCLUDE_DIRS})
-set(LIBFCL_LIBRARIES)
-foreach(_lib ${LIBFCL_PC_LIBRARIES})
-  find_library(lib${_lib} ${_lib} HINTS ${LIBFCL_PC_LIBRARY_DIRS})
-  list(APPEND LIBFCL_LIBRARIES ${lib${_lib}})
-endforeach()
+pkg_check_modules(LIBFCL REQUIRED fcl)
+
+find_library(LIBFCL_LIBRARIES_FULL ${LIBFCL_LIBRARIES} ${LIBFCL_LIBRARY_DIRS})
+set(LIBFCL_LIBRARIES "${LIBFCL_LIBRARIES_FULL}")
 
 
 catkin_package(
@@ -45,17 +41,10 @@ catkin_package(
   CATKIN_DEPENDS roscpp roslib rospy sensor_msgs std_msgs tf tf2 tf2_ros actionlib esc_move_base_msgs
   #mbf_msgs 
   nav_msgs
-  # pedsim_msgs
+  #pedsim_msgs
   # DEPENDS OMPL
 )
 
-
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
