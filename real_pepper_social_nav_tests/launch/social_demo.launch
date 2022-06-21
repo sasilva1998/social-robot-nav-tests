@@ -1,0 +1,31 @@
+<launch>
+
+
+    <arg name="output" default="screen" />
+
+
+    <include file="$(find real_pepper_social_nav_tests)/launch/real_pepper_full.launch" />
+
+    <!-- pre-made map for localization -->
+    <arg name="map_file" default="$(find real_pepper_social_nav_tests)/map/robot_lab.bt" />
+    <!-- Map server -->
+    <node pkg="octomap_server" name="octomap_server" type="octomap_server_node" args="$(arg map_file)" />
+
+    <!-- proposed framework -->
+    <include file="$(find real_pepper_social_nav_tests)/launch/planner_drive.launch" />
+
+    <include file="$(find real_pepper_social_nav_tests)/launch/pozyx_bridge.launch" />
+
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 1000" />
+
+    <node pkg="tf" type="static_transform_publisher" name="odom_to_hololens" args="0 0 0 0 0 0 odom hololens 1000" />
+
+
+    <node name="rviz_pepper" pkg="rviz" type="rviz" args="-d $(find pepper_social_nav_tests)/rviz/default.rviz"/>
+
+    <include file="$(find real_pepper_social_nav_tests)/launch/ped_visualizer.launch" />
+
+    <!-- <arg name="map_file" default="$(find test_pepper_simulation_bringup)/maps/map.yaml" /> 
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" /> -->
+
+</launch>

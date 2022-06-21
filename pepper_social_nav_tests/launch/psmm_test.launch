@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find pepper_social_nav_tests)/launch/robot_simulation_base.launch">
+        <arg name="online" default="true" />
+    </include>
+
+    <include file="$(find pepper_social_nav_tests)/launch/psmm_drive.launch" />
+
+    <node pkg="sfm_diff_drive" type="rmi_metrics.py" name="rmi_metric_publisher" />
+
+    <node pkg="sfm_diff_drive" type="sii_metrics.py" name="sii_metric_publisher" />
+
+    <include file="$(find cpu_monitor)/launch/cpu_monitor.launch" />
+
+    <node pkg="pepper_social_nav_tests" type="psmm_requester.py" name="psmm_requester" />
+
+    <node pkg="pepper_social_nav_tests" type="collision_counter" name="collision_counter" />
+
+    <!-- params for agent csv writing -->
+    <arg name="csv_dir" default="/home/sasm/ros/melodic/system/src/pepper_social_nav_tests/results/" />
+    <arg name="solution_type" default="sfm" />
+    <arg name="csv_name" default="01_02_case1.csv" />
+
+    <node pkg="pepper_social_nav_tests" type="sfm_metrics_recorder.py" name="metrics_recorder" output="screen">
+        <param name="csv_dir" value="$(arg csv_dir)" type="string" />
+        <param name="solution_type" value="$(arg solution_type)" type="string" />
+        <param name="csv_name" value="$(arg csv_name)" type="string" />
+    </node>
+
+
+</launch>

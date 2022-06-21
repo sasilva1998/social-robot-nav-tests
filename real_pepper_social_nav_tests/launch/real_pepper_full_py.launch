@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- real pepper robot bringup -->
+    <include file="$(find real_pepper_social_nav_tests)/launch/pepper_full_py.launch">
+        <arg name="nao_ip" default="192.168.160.68" />
+    </include>
+
+    <!-- launching octomapping -->
+    <include file="$(find real_pepper_social_nav_tests)/launch/octomap_node.launch" />
+
+    <!-- proposed framework -->
+    <!-- <include file="$(find pepper_social_nav_tests)/launch/planner_drive.launch" /> -->
+
+
+</launch>
