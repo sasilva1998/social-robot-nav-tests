@@ -8,7 +8,7 @@ import time
 from esc_move_base_msgs.msg import Goto2DAction, Goto2DGoal
 
 
-def social_rrt_client():
+def esc_nav_stack_client():
 
     time.sleep(10)
     client = actionlib.SimpleActionClient("/pepper_goto_action", Goto2DAction)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     try:
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
-        rospy.init_node("social_rrt_client_py")
-        result = social_rrt_client()
+        rospy.init_node("esc_nav_stack_client_py")
+        result = esc_nav_stack_client()
     except rospy.ROSInterruptException:
         print("program interrupted before completion")

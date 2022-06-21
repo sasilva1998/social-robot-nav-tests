@@ -29,10 +29,10 @@ def init_launch(launchfile, process_listener):
     return launch
 
 
-rospy.init_node("social_rrt_tests_launcher")
+rospy.init_node("esc_nav_stack_tests_launcher")
 
 LAUNCH_FILE = (
-    "/home/sasm/ros/melodic/system/src/pepper_social_nav_tests/launch/social_rrt_tests.launch"
+    "/home/sasm/ros/melodic/system/src/pepper_social_nav_tests/launch/esc_nav_stack_tests.launch"
 )
 launch = init_launch(LAUNCH_FILE, ProcessListener())
 launch.start()

@@ -1,5 +1,5 @@
 # Path planning parameters
-world_frame: map
+world_frame: world
 planner_name: RRTstar # RRT, RRTstar
 planning_bounds_x: [-50.0, 50.0] # [x_min, x_max]
 planning_bounds_y: [-50.0, 50.0] # [y_min, y_max]
@@ -15,23 +15,23 @@ optimization_objective: SocialComfort #PathLength, RiskZones, SocialComfort, Ext
 motion_cost_interpolation: False
 start_prev_path_proj: False
 xy_goal_tolerance: 0.25
-visualize_tree: True
+visualize_tree: False
 
 # Collision checking
 octomap_service: /octomap_binary
 global_map_topic: /map
-pepper_base_height: 1.22
-pepper_base_radius: 0.35
+robot_base_height: 1.22
+robot_base_radius: 0.35
 
-odometry_topic: /pepper_robot/odom
+odometry_topic: /pepper/odom_groundtruth
 query_goal_topic: /esc_move_base_planner/query_goal
 solution_path_topic: /esc_move_base_planner/solution_path
 
-goto_action: /pepper_goto_action
-goto_region_action: /pepper_goto_region_action
+goto_action: /esc_goto_action
+goto_region_action: /esc_goto_region_action
 
 # Social agents data topics
-sim_agents_topic: /pedsim_simulator/simulated_agents
+sim_agents_topic: /pedsim_simulator/simulated_agents_overwritten
 
 # extra frame option
-main_frame: map
+main_frame: world
