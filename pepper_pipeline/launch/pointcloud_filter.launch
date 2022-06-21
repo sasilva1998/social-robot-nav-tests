@@ -1,9 +1,0 @@
-<launch>
-
-    <!-- launching the node for filtering and republishing the pointcloud -->
-    <node name="pointcloud_filter" pkg="pcdfilter_pa" type="pcdfilter_pa_node" output="screen">
-        <!-- load parameter -->
-        <rosparam command="load" file="$(find pepper_pipeline)/config/d435_pointcloud.yaml" />
-    </node>
-
-</launch>

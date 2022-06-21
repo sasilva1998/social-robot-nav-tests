@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="robot_ip" default="192.168.0.100" />
+    <arg name="network_interface" default="wlp0s20f3" />
+
+    <!-- real pepper robot bringup -->
+    <include file="$(find real_pepper_social_nav_tests)/launch/pepper_full.launch">
+        <arg name="nao_ip" default="$(arg robot_ip)" />
+        <arg name="roscore_ip" default="sasm-XPS-17-9710:11311" />
+        <arg name="network_interface" default="$(arg network_interface)" />
+    </include>
+
+    <!-- package to control robot completely -->
+    <!-- <include file="$(find real_pepper_social_nav_tests)/launch/pepper_bringup.launch">
+        <arg name="robot_ip" default="$(arg robot_ip)" />
+        <arg name="network_interface" default="$(arg network_interface)" />
+    </include> -->
+
+    <!-- <include file="$(find real_pepper_social_nav_tests)/launch/moveit_planner.launch" /> -->
+
+</launch>
