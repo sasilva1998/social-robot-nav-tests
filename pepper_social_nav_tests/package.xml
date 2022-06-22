@@ -45,6 +45,9 @@
   <depend>esc_move_base_control</depend>
   <depend>esc_move_base_mapping</depend>
 
+  <!-- cpu measure -->
+  <depend>cpu_monitor</depend>
+
   <!-- pcd -->
   <depend>ros_pcdfilter</depend>
 

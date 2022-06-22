@@ -178,14 +178,14 @@ class MetricsRecorder:
         )
 
         rospy.Subscriber(
-            "/pepper_goto_action/result",
+            "/esc_goto_action/result",
             Goto2DActionResult,
             self.goal_reached_callback,
             queue_size=1,
         )
 
         rospy.Subscriber(
-            "/pepper_goto_action/goal",
+            "/esc_goto_action/goal",
             Goto2DActionGoal,
             self.goal_available_callback,
             queue_size=1,

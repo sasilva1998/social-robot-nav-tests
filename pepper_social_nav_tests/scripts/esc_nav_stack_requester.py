@@ -3,15 +3,13 @@
 import rospy
 import actionlib
 import time
-
-# from sfm_diff_drive.msg import SFMDriveAction, SFMDriveGoal
 from esc_move_base_msgs.msg import Goto2DAction, Goto2DGoal
-
+from sensor_msgs.msg import PointCloud2
 
 def esc_nav_stack_client():
 
     time.sleep(10)
-    client = actionlib.SimpleActionClient("/pepper_goto_action", Goto2DAction)
+    client = actionlib.SimpleActionClient("/esc_goto_action", Goto2DAction)
 
     # Waits until the action server has started up and started
     # listening for goals.
@@ -38,6 +36,7 @@ if __name__ == "__main__":
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
         rospy.init_node("esc_nav_stack_client_py")
+        rospy.wait_for_message("/pepper/camera/depth/points", PointCloud2)
         result = esc_nav_stack_client()
     except rospy.ROSInterruptException:
         print("program interrupted before completion")

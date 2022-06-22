@@ -4,7 +4,6 @@ import rospy
 import actionlib
 import time
 from psmm_drive.msg import PSMMDriveAction, PSMMDriveGoal
-from nav_msgs.msg import OccupancyGrid
 from sensor_msgs.msg import PointCloud2
 
 def psmm_drive_client():
