@@ -46,10 +46,13 @@
   <depend>nav_msgs</depend>
   <depend>pedsim_ros</depend>
 
-  <!-- Pepper -->
+  <!-- esc nav method -->
   <depend>esc_move_base_msgs</depend>
   <depend>esc_move_base_control</depend>
   <depend>esc_move_base_mapping</depend>
+
+  <!-- cpu measure -->
+  <depend>cpu_monitor</depend>
 
   <build_depend condition="$ROS_DISTRO != noetic">libfcl-dev</build_depend>
   <exec_depend condition="$ROS_DISTRO != noetic">libfcl-dev</exec_depend>
