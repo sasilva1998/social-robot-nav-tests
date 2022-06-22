@@ -38,7 +38,7 @@
   <!-- msgs -->
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>pedsim_ros</depend>
+  <!-- <depend>pedsim_ros</depend> -->
 
   <!-- esc_nav_stack -->
   <depend>esc_move_base_msgs</depend>
