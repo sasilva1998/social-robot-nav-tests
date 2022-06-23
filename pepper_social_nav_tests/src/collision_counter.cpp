@@ -5,24 +5,19 @@
 #include <octomap/octomap.h>
 #include <octomap_msgs/conversions.h>
 #include <octomap_msgs/GetOctomap.h>
-#include <octomap/OcTree.h>
 
 // fcl
-#include <fcl/fcl.h>
+#include <fcl/shape/geometric_shapes.h>
+#include <fcl/shape/geometric_shapes_utility.h>
+#include <fcl/narrowphase/narrowphase.h>
+#include <fcl/octree.h>
+#include <fcl/traversal/traversal_node_octree.h>
+#include <fcl/broadphase/broadphase.h>
+#include <fcl/shape/geometric_shape_to_BVH_model.h>
+#include <fcl/math/transform.h>
 #include <fcl/collision.h>
-#include <fcl/geometry/octree/octree.h>
-#include <fcl/narrowphase/collision_object.h>
-#include <fcl/narrowphase/distance.h>
-#include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
-#include <fcl/broadphase/default_broadphase_callbacks.h>
-#include <fcl/broadphase/broadphase_spatialhash.h>
-#include <fcl/common/types.h>
-#include <fcl/config.h>
-#include <fcl/geometry/shape/cylinder.h>
-#include <fcl/math/geometry-inl.h>
-#include <fcl/narrowphase/collision_object.h>
-#include <fcl/narrowphase/collision_request.h>
-#include <fcl/narrowphase/collision_result.h>
+#include <fcl/collision_node.h>
+#include <fcl/distance.h>
 
 #include <nav_msgs/Odometry.h>
 #include <pedsim_msgs/AgentStates.h>
@@ -41,11 +36,11 @@ int main(int argc, char **argv)
     double pepper_base_radius_ = 0.20;
     double pepper_base_height_ = 1.22;
 
-    std::shared_ptr<fcl::Cylinder<float>> pepper_collision_solid_;
-    std::shared_ptr<fcl::Cylinder<float>> agent_collision_solid_;
+    std::shared_ptr<fcl::Cylinder> pepper_collision_solid_;
+    std::shared_ptr<fcl::Cylinder> agent_collision_solid_;
 
-    pepper_collision_solid_.reset(new fcl::Cylinder<float>(pepper_base_radius_, pepper_base_height_));
-    agent_collision_solid_.reset(new fcl::Cylinder<float>(0.35, pepper_base_height_));
+    pepper_collision_solid_.reset(new fcl::Cylinder(pepper_base_radius_, pepper_base_height_));
+    agent_collision_solid_.reset(new fcl::Cylinder(0.35, pepper_base_height_));
 
     GetOctomap::Request req;
     GetOctomap::Response resp;
@@ -57,11 +52,10 @@ int main(int argc, char **argv)
 
     ros::Publisher collisionCounterPub = n.advertise<std_msgs::Int32>("collision_counter", 1000);
 
-    fcl::CollisionRequestf collision_request;
-    fcl::CollisionResultf collision_result_octomap;
+    fcl::CollisionRequest collision_request;
+    fcl::CollisionResult collision_result_octomap;
 
-
-    fcl::CollisionResult<float> collision_result;
+    fcl::CollisionResult collision_result;
 
     std:bool foundCollision = false;
 
@@ -77,16 +71,18 @@ int main(int argc, char **argv)
 
         if (abs_octree_)
         {
-
             octomap::OcTree *octree_ = dynamic_cast<octomap::OcTree *>(abs_octree_);
-            
-            fcl::OcTree<float> *tree_ = new fcl::OcTree<float>(std::shared_ptr<const octomap::OcTree>(octree_));
+            fcl::OcTree *tree_ = new fcl::OcTree(std::shared_ptr<const octomap::OcTree>(octree_));
+            fcl::CollisionObject *tree_obj_ = new fcl::CollisionObject((std::shared_ptr<fcl::CollisionGeometry>(tree_)));
 
-            fcl::CollisionObject<float> *tree_obj_= new fcl::CollisionObject<float>((std::shared_ptr<fcl::CollisionGeometry<float>>(tree_)));
+            fcl::Transform3f pepper_tf;
+            pepper_tf.setIdentity();
+            pepper_tf.setTranslation(fcl::Vec3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
+            fcl::Quaternion3f qt0;
+            qt0.fromEuler(0.0, 0.0, 0.0);
+            pepper_tf.setQuatRotation(qt0);
 
-            fcl::CollisionObject<float> vehicle_co(pepper_collision_solid_); 
-
-            vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
+            fcl::CollisionObject vehicle_co(pepper_collision_solid_, pepper_tf);
 
             fcl::collide(tree_obj_, &vehicle_co, collision_request, collision_result_octomap);
 
@@ -111,10 +107,14 @@ int main(int argc, char **argv)
 
                 if (!foundCollision)
                 {
+                    fcl::Transform3f pepper_tf;
+                    pepper_tf.setIdentity();
+                    pepper_tf.setTranslation(fcl::Vec3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
+                    fcl::Quaternion3f qt0;
+                    qt0.fromEuler(0.0, 0.0, 0.0);
+                    pepper_tf.setQuatRotation(qt0);
 
-                    fcl::CollisionObject<float> vehicle_co(pepper_collision_solid_);
-
-                    vehicle_co.setTranslation(fcl::Vector3f(odomData->pose.pose.position.x, odomData->pose.pose.position.y, pepper_base_height_ / 2.0));
+                    fcl::CollisionObject vehicle_co(pepper_collision_solid_, pepper_tf);
 
                     pedsim_msgs::AgentState agentState = agentStates->agent_states[i];
 
@@ -125,10 +125,15 @@ int main(int argc, char **argv)
                     if (dRobotAgent < 2)
                     {
                         // FCL
+                        fcl::Transform3f agent_tf;
+                        agent_tf.setIdentity();
+                        agent_tf.setTranslation(
+                            fcl::Vec3f(agentState.pose.position.x, agentState.pose.position.y, pepper_base_height_ / 2.0));
+                        fcl::Quaternion3f qt0;
+                        qt0.fromEuler(0.0, 0.0, 0.0);
+                        agent_tf.setQuatRotation(qt0);
 
-                        fcl::CollisionObject<float> agent_co(agent_collision_solid_);
-
-                        agent_co.setTranslation(fcl::Vector3f(agentState.pose.position.x, agentState.pose.position.y, pepper_base_height_ / 2.0));
+                        fcl::CollisionObject agent_co(agent_collision_solid_, agent_tf);
                         fcl::collide(&agent_co, &vehicle_co, collision_request, collision_result);
 
                         if (collision_result.isCollision())

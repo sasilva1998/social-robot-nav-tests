@@ -47,7 +47,7 @@ def goal_reached_callback(msg):
 
 
 rospy.Subscriber(
-    "/pepper_goto_action/result",
+    "/esc_goto_action/result",
     Goto2DActionResult,
     goal_reached_callback,
     queue_size=1,
